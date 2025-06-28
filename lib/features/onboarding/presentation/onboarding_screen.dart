@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/services/launch_service.dart';
-import '../../../../l10n/app_localizations.dart';
+import 'package:mind_builder/core/services/launch_service.dart';
+import 'package:mind_builder/l10n/app_localizations.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -29,6 +29,11 @@ class OnboardingScreen extends StatelessWidget {
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () => _finishOnboarding(context),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                ),
                 child: Text(AppLocalizations.of(context)!.start),
               ),
             ],

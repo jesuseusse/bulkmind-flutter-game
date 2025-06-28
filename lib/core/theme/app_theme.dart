@@ -12,6 +12,14 @@ class AppTheme {
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
     ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+          side: BorderSide(color: AppColors.lightPrimary),
+        ),
+      ),
+    ),
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -23,6 +31,14 @@ class AppTheme {
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF1F1F1F),
       foregroundColor: Colors.white,
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(1),
+          side: BorderSide(color: AppColors.darkPrimary),
+        ),
+      ),
     ),
   );
 }
