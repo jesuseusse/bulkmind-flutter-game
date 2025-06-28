@@ -7,7 +7,7 @@ class OnboardingScreen extends StatelessWidget {
 
   Future<void> _finishOnboarding(BuildContext context) async {
     await LaunchService.markOnboardingSeen();
-    context.go('/');
+    if (context.mounted) context.go('/');
   }
 
   @override

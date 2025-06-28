@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'core/theme/app_theme.dart';
 import 'app_router.dart';
+import 'l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,10 +20,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: router,
-      title: 'Flutter Demo',
+      title: 'Mind Builder',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: const [Locale('en'), Locale('es')],
+      localeResolutionCallback: (locale, supportedLocales) {
+        if (locale?.languageCode == 'es') {
+          return const Locale('es');
+        }
+        return const Locale('en');
+      },
     );
   }
 }
