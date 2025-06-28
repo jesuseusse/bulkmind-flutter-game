@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/services/launch_service.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -20,15 +21,15 @@ class OnboardingScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Bienvenido a Mental Gym',
-                style: TextStyle(fontSize: 24, color: Colors.white),
+              Text(
+                AppLocalizations.of(context)!.welcome,
+                style: const TextStyle(fontSize: 24, color: Colors.white),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () => _finishOnboarding(context),
-                child: const Text('Comenzar'),
+                child: Text(AppLocalizations.of(context)!.start),
               ),
             ],
           ),

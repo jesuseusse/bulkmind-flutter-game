@@ -1,4 +1,4 @@
-package com.example.flutter_application_skeleton
+package com.example.mind_builder
 
 import io.flutter.embedding.android.FlutterActivity
 

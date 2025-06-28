@@ -109,6 +109,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start'**
   String get start;
+
+  /// No description provided for @appName.
+  ///
+  /// In en, this message translates to:
+  /// **'Mind Builder'**
+  String get appName;
 }
 
 class _AppLocalizationsDelegate

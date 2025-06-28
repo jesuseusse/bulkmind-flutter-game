@@ -1,5 +1,6 @@
 {
 	"@@locale": "en",
 	"welcome": "Welcome to Mental Gym",
-	"start": "Start"
+	"start": "Start",
+	"appName": "Mind Builder"
 }

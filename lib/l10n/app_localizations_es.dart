@@ -13,4 +13,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get start => 'Comenzar';
+
+  @override
+  String get appName => 'Mind Builder';
 }
