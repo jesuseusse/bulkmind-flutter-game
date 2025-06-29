@@ -12,5 +12,8 @@
 	"pink": "Pink",
 	"grey": "Grey",
 	"brown": "Brown",
-	"white": "White"
+	"white": "White",
+	"correct": "¡Correct!",
+	"youCanContinue": "You can continue...",
+	"continueLabel": "Continue"
 }

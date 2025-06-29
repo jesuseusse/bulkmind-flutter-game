@@ -46,4 +46,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get white => 'Blanco';
+
+  @override
+  String get correct => '¡Correcto!';
+
+  @override
+  String get youCanContinue => 'Ya puedes seguir...';
+
+  @override
+  String get continueLabel => 'Continuar';
 }

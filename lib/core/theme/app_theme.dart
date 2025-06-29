@@ -20,6 +20,19 @@ class AppTheme {
         ),
       ),
     ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: Colors.white,
+      titleTextStyle: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+      contentTextStyle: const TextStyle(fontSize: 16, color: Colors.black87),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(2),
+        side: const BorderSide(color: Colors.white, width: 1),
+      ),
+    ),
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -38,6 +51,19 @@ class AppTheme {
           borderRadius: BorderRadius.circular(1),
           side: BorderSide(color: AppColors.darkPrimary),
         ),
+      ),
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: const Color(0xFF1F1F1F),
+      titleTextStyle: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      contentTextStyle: const TextStyle(fontSize: 16, color: Colors.white70),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(2),
+        side: const BorderSide(color: Colors.white, width: 1),
       ),
     ),
   );

@@ -32,7 +32,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _handleAnswer(Color selectedColor) {
     if (selectedColor == game.displayedColor) {
       LaunchService.markOnboardingSeen().then((_) {
-        if (mounted) context.go('/');
+        if (mounted) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => AlertDialog(
+              title: Text(AppLocalizations.of(context)!.correct),
+              content: Text(AppLocalizations.of(context)!.youCanContinue),
+              actions: [
+                TextButton(
+                  onPressed: () => context.go('/'),
+                  child: Text(AppLocalizations.of(context)!.continueLabel),
+                ),
+              ],
+            ),
+          );
+        }
       });
     } else {
       setState(() {

@@ -12,5 +12,8 @@
 	"pink": "Rosa",
 	"grey": "Gris",
 	"brown": "Marrón",
-	"white": "Blanco"
+	"white": "Blanco",
+	"correct": "¡Correcto!",
+	"youCanContinue": "Ya puedes seguir...",
+	"continueLabel": "Continuar"
 }

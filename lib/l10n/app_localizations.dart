@@ -175,6 +175,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'White'**
   String get white;
+
+  /// No description provided for @correct.
+  ///
+  /// In en, this message translates to:
+  /// **'¡Correct!'**
+  String get correct;
+
+  /// No description provided for @youCanContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'You can continue...'**
+  String get youCanContinue;
+
+  /// No description provided for @continueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueLabel;
 }
 
 class _AppLocalizationsDelegate
