@@ -2,5 +2,15 @@
 	"@@locale": "es",
 	"welcome": "Bienvenido a Mental Gym",
 	"start": "Comenzar",
-	"appName": "Mind Builder"
+	"appName": "Mind Builder",
+	"red": "Rojo",
+	"blue": "Azul",
+	"green": "Verde",
+	"yellow": "Amarillo",
+	"orange": "Naranja",
+	"purple": "Morado",
+	"pink": "Rosa",
+	"grey": "Gris",
+	"brown": "Marrón",
+	"white": "Blanco"
 }

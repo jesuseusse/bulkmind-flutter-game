@@ -115,6 +115,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mind Builder'**
   String get appName;
+
+  /// No description provided for @red.
+  ///
+  /// In en, this message translates to:
+  /// **'Red'**
+  String get red;
+
+  /// No description provided for @blue.
+  ///
+  /// In en, this message translates to:
+  /// **'Blue'**
+  String get blue;
+
+  /// No description provided for @green.
+  ///
+  /// In en, this message translates to:
+  /// **'Green'**
+  String get green;
+
+  /// No description provided for @yellow.
+  ///
+  /// In en, this message translates to:
+  /// **'Yellow'**
+  String get yellow;
+
+  /// No description provided for @orange.
+  ///
+  /// In en, this message translates to:
+  /// **'Orange'**
+  String get orange;
+
+  /// No description provided for @purple.
+  ///
+  /// In en, this message translates to:
+  /// **'Purple'**
+  String get purple;
+
+  /// No description provided for @pink.
+  ///
+  /// In en, this message translates to:
+  /// **'Pink'**
+  String get pink;
+
+  /// No description provided for @grey.
+  ///
+  /// In en, this message translates to:
+  /// **'Grey'**
+  String get grey;
+
+  /// No description provided for @brown.
+  ///
+  /// In en, this message translates to:
+  /// **'Brown'**
+  String get brown;
+
+  /// No description provided for @white.
+  ///
+  /// In en, this message translates to:
+  /// **'White'**
+  String get white;
 }
 
 class _AppLocalizationsDelegate

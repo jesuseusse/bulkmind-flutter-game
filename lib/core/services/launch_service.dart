@@ -5,7 +5,7 @@ class LaunchService {
 
   static Future<bool> shouldShowOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
-    return (prefs.getBool(_key) ?? false);
+    return !(prefs.getBool(_key) ?? false);
   }
 
   static Future<void> markOnboardingSeen() async {

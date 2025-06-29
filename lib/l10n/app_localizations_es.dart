@@ -16,4 +16,34 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get appName => 'Mind Builder';
+
+  @override
+  String get red => 'Rojo';
+
+  @override
+  String get blue => 'Azul';
+
+  @override
+  String get green => 'Verde';
+
+  @override
+  String get yellow => 'Amarillo';
+
+  @override
+  String get orange => 'Naranja';
+
+  @override
+  String get purple => 'Morado';
+
+  @override
+  String get pink => 'Rosa';
+
+  @override
+  String get grey => 'Gris';
+
+  @override
+  String get brown => 'Marrón';
+
+  @override
+  String get white => 'Blanco';
 }
