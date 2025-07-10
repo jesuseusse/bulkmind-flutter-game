@@ -3,6 +3,7 @@ import 'color_palette.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
+    fontFamily: 'monospace',
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.lightPrimary,
       brightness: Brightness.light,
@@ -14,6 +15,7 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.black,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
           side: BorderSide(color: AppColors.lightPrimary),
@@ -21,11 +23,11 @@ class AppTheme {
       ),
     ),
     dialogTheme: DialogThemeData(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black,
       titleTextStyle: const TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
-        color: Colors.black,
+        color: Colors.white,
       ),
       contentTextStyle: const TextStyle(fontSize: 16, color: Colors.black87),
       shape: RoundedRectangleBorder(
@@ -36,6 +38,7 @@ class AppTheme {
   );
 
   static ThemeData darkTheme = ThemeData(
+    fontFamily: 'monospace',
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.darkPrimary,
       brightness: Brightness.dark,
@@ -47,6 +50,7 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.darkPrimary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(1),
           side: BorderSide(color: AppColors.darkPrimary),
@@ -54,7 +58,7 @@ class AppTheme {
       ),
     ),
     dialogTheme: DialogThemeData(
-      backgroundColor: const Color(0xFF1F1F1F),
+      backgroundColor: Colors.black,
       titleTextStyle: const TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,

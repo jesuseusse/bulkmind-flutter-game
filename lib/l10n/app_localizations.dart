@@ -193,6 +193,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue'**
   String get continueLabel;
+
+  /// No description provided for @goToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Login'**
+  String get goToLogin;
+
+  /// No description provided for @logic.
+  ///
+  /// In en, this message translates to:
+  /// **'Logic'**
+  String get logic;
+
+  /// No description provided for @intuition.
+  ///
+  /// In en, this message translates to:
+  /// **'Intuition'**
+  String get intuition;
+
+  /// No description provided for @memory.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory'**
+  String get memory;
+
+  /// No description provided for @spatial.
+  ///
+  /// In en, this message translates to:
+  /// **'Spatial'**
+  String get spatial;
 }
 
 class _AppLocalizationsDelegate

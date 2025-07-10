@@ -15,5 +15,10 @@
 	"white": "White",
 	"correct": "¡Correct!",
 	"youCanContinue": "You can continue...",
-	"continueLabel": "Continue"
+	"continueLabel": "Continue",
+	"goToLogin": "Go to Login",
+	"logic": "Logic",
+	"intuition": "Intuition",
+	"memory": "Memory",
+	"spatial": "Spatial"
 }

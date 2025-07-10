@@ -55,4 +55,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get continueLabel => 'Continuar';
+
+  @override
+  String get goToLogin => 'Ir a Login';
+
+  @override
+  String get logic => 'Lógica';
+
+  @override
+  String get intuition => 'Intuición';
+
+  @override
+  String get memory => 'Memoria';
+
+  @override
+  String get spatial => 'Espacial';
 }
