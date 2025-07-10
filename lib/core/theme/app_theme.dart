@@ -29,7 +29,7 @@ class AppTheme {
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
-      contentTextStyle: const TextStyle(fontSize: 16, color: Colors.black87),
+      contentTextStyle: const TextStyle(fontSize: 16, color: Colors.white),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(2),
         side: const BorderSide(color: Colors.white, width: 1),
@@ -64,7 +64,7 @@ class AppTheme {
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
-      contentTextStyle: const TextStyle(fontSize: 16, color: Colors.white70),
+      contentTextStyle: const TextStyle(fontSize: 16, color: Colors.white),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(2),
         side: const BorderSide(color: Colors.white, width: 1),

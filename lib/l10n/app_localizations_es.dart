@@ -15,6 +15,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get start => 'Comenzar';
 
   @override
+  String get back => 'Regresar';
+
+  @override
+  String get restart => 'Reiniciar';
+
+  @override
   String get appName => 'Mind Builder';
 
   @override
@@ -70,4 +76,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get spatial => 'Espacial';
+
+  @override
+  String get youAreALooser => 'Eres un perdedor';
+
+  @override
+  String get newRecord => 'Nuevo Record';
+
+  @override
+  String get maxLevel => 'Nivel Máximo';
 }

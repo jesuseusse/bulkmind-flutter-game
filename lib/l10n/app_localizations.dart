@@ -110,6 +110,18 @@ abstract class AppLocalizations {
   /// **'Start'**
   String get start;
 
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @restart.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart'**
+  String get restart;
+
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
@@ -223,6 +235,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Spatial'**
   String get spatial;
+
+  /// No description provided for @youAreALooser.
+  ///
+  /// In en, this message translates to:
+  /// **'You are a looser'**
+  String get youAreALooser;
+
+  /// No description provided for @newRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'New Record'**
+  String get newRecord;
+
+  /// No description provided for @maxLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Level'**
+  String get maxLevel;
 }
 
 class _AppLocalizationsDelegate

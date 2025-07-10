@@ -2,6 +2,8 @@
 	"@@locale": "en",
 	"welcome": "Welcome to Mental Gym",
 	"start": "Start",
+	"back": "Back",
+	"restart": "Restart",
 	"appName": "Mind Builder",
 	"red": "Red",
 	"blue": "Blue",
@@ -20,5 +22,8 @@
 	"logic": "Logic",
 	"intuition": "Intuition",
 	"memory": "Memory",
-	"spatial": "Spatial"
+	"spatial": "Spatial",
+	"youAreALooser": "You are a looser",
+	"newRecord": "New Record",
+	"maxLevel": "Max Level"
 }
