@@ -25,5 +25,10 @@
 	"spatial": "Spatial",
 	"youAreALooser": "You are a looser",
 	"newRecord": "New Record",
-	"maxLevel": "Max Level"
+	"maxLevel": "Max Level",
+	"newBestTime": "New Best Time",
+	"bestTime": "Best Time",
+	"yourScore": "Your Score",
+	"timeTaken": "Time Taken",
+	"levels": "Levels"
 }

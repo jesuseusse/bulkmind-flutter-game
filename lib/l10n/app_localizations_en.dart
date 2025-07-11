@@ -85,4 +85,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get maxLevel => 'Max Level';
+
+  @override
+  String get newBestTime => 'New Best Time';
+
+  @override
+  String get bestTime => 'Best Time';
+
+  @override
+  String get yourScore => 'Your Score';
+
+  @override
+  String get timeTaken => 'Time Taken';
+
+  @override
+  String get levels => 'Levels';
 }

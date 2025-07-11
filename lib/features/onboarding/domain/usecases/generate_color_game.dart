@@ -60,15 +60,3 @@ List<Color> generateColorOptions(String wordKey, Color displayedColor) {
 
   return options;
 }
-
-class ColorGameData {
-  final String wordKey;
-  final Color displayedColor;
-  final List<Color> options;
-
-  ColorGameData({
-    required this.wordKey,
-    required this.displayedColor,
-    required this.options,
-  });
-}

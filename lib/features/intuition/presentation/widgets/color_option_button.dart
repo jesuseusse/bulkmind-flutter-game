@@ -18,13 +18,12 @@ class ColorOptionButton extends StatefulWidget {
 
 class _ColorOptionButtonState extends State<ColorOptionButton> {
   Color? _overlay;
-  bool _isPressed = false; // Renamed for clarity
+  bool _isPressed = false;
 
   @override
   void didUpdateWidget(covariant ColorOptionButton oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Only reset state if the *identity* of the button changes (its color or correctness).
-    // This prevents unnecessary animation resets if only other parts of the game state change.
+    // Reset button state only if its core properties (color or correctness) change.
     if (oldWidget.color != widget.color ||
         oldWidget.isCorrect != widget.isCorrect) {
       _resetButtonState();
@@ -33,7 +32,6 @@ class _ColorOptionButtonState extends State<ColorOptionButton> {
 
   void _resetButtonState() {
     if (_isPressed || _overlay != null) {
-      // Only call setState if there's actually a change
       setState(() {
         _isPressed = false;
         _overlay = null;
@@ -42,24 +40,24 @@ class _ColorOptionButtonState extends State<ColorOptionButton> {
   }
 
   void _handleTap() {
-    if (_isPressed) return; // Prevent multiple taps during animation
+    if (_isPressed) return;
+    if (widget.isCorrect) {
+      setState(() {
+        _isPressed = true;
+      });
+      widget.onFinished();
+    } else {
+      setState(() {
+        _isPressed = true;
+        _overlay = Colors.red.withValues(alpha: .5);
+      });
 
-    setState(() {
-      _isPressed = true;
-      _overlay = widget.isCorrect
-          ? Colors.green.withValues(alpha: .5)
-          : Colors.red.withValues(alpha: .5);
-    });
-
-    // Use Future.microtask or ensure it's not directly in setState if possible
-    // This delay is intentional for UX feedback.
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted) {
-        // Check if the widget is still in the tree before calling callback
-        widget.onFinished();
-        _resetButtonState(); // Reset button state after the game updates
-      }
-    });
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          widget.onFinished();
+        }
+      });
+    }
   }
 
   @override
@@ -69,31 +67,23 @@ class _ColorOptionButtonState extends State<ColorOptionButton> {
       child: Stack(
         children: [
           ElevatedButton(
-            onPressed: _isPressed
-                ? null
-                : _handleTap, // Disable button while pressed
+            onPressed: _isPressed ? null : _handleTap,
             style: ElevatedButton.styleFrom(
               backgroundColor: widget.color,
-              foregroundColor:
-                  Colors.white, // Changed to white for better contrast
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
               minimumSize: const Size.fromHeight(80),
             ),
-            child:
-                const SizedBox.shrink(), // No child needed if just a colored button
+            child: const SizedBox.shrink(),
           ),
-          if (_overlay != null) // Only build overlay if it's visible
+          if (_overlay != null)
             Positioned.fill(
               child: IgnorePointer(
-                // Prevent interaction with overlay
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   color: _overlay,
-                  child: Center(
-                    child: Text(
-                      widget.isCorrect ? '✅' : '❌',
-                      style: const TextStyle(fontSize: 32),
-                    ),
+                  child: const Center(
+                    child: Text('❌', style: TextStyle(fontSize: 32)),
                   ),
                 ),
               ),

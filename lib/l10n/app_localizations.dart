@@ -253,6 +253,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Max Level'**
   String get maxLevel;
+
+  /// No description provided for @newBestTime.
+  ///
+  /// In en, this message translates to:
+  /// **'New Best Time'**
+  String get newBestTime;
+
+  /// No description provided for @bestTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Time'**
+  String get bestTime;
+
+  /// No description provided for @yourScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Score'**
+  String get yourScore;
+
+  /// No description provided for @timeTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Taken'**
+  String get timeTaken;
+
+  /// No description provided for @levels.
+  ///
+  /// In en, this message translates to:
+  /// **'Levels'**
+  String get levels;
 }
 
 class _AppLocalizationsDelegate

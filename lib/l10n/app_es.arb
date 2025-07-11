@@ -25,5 +25,10 @@
 	"spatial": "Espacial",
 	"youAreALooser": "Eres un perdedor",
 	"newRecord": "Nuevo Record",
-	"maxLevel": "Nivel Máximo"
+	"maxLevel": "Nivel Máximo",
+	"newBestTime": "Nuevo mejor tiempo",
+	"bestTime": "Mejor tiempo",
+	"yourScore": "Tu puntuación",
+	"timeTaken": "Tiempo",
+	"levels": "Niveles"
 }
