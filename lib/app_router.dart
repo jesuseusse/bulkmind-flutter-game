@@ -12,7 +12,7 @@ Future<GoRouter> createAppRouter() async {
   final showOnboarding = await LaunchService.shouldShowOnboarding();
 
   return GoRouter(
-    initialLocation: showOnboarding ? '/onboarding' : '/',
+    initialLocation: '/',
     routes: [
       GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
