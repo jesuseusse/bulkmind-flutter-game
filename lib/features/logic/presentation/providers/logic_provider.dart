@@ -20,6 +20,13 @@ class LogicProvider extends ChangeNotifier {
     _generatePuzzle();
   }
 
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _stopwatch.stop();
+    super.dispose();
+  }
+
   void _generatePuzzle() {
     puzzle = generateLogicPuzzle();
     _stopTimer();

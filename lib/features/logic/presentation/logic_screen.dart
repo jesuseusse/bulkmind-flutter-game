@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mind_builder/core/widgets/game_option_button.dart';
 import 'package:mind_builder/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:mind_builder/core/widgets/base_scaffold.dart';
@@ -31,104 +32,70 @@ class LogicScreen extends StatelessWidget {
               level: logicProvider.level,
               time: logicProvider.elapsedTimeFormatted,
               feedbackIcon: feedbackIcon,
-              question: Text(
-                logicProvider.puzzle['question'],
-                style: const TextStyle(fontSize: 48, color: Colors.white),
-                textAlign: TextAlign.center,
+              question: Icon(
+                logicProvider.puzzle['question'] == '>'
+                    ? Icons.trending_down
+                    : Icons.trending_up,
+                size: 48,
+                color: Colors.white,
               ),
               options: [
                 Row(
                   children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        key: ValueKey(
-                          logicProvider.puzzle['options'][0].toString(),
-                        ),
-                        onPressed:
-                            logicProvider.pressed.contains(
-                              logicProvider.puzzle['options'][0],
-                            )
-                            ? null
-                            : () {
-                                logicProvider.selectOption(
-                                  logicProvider.puzzle['options'][0],
-                                  context,
-                                );
-                              },
-                        child: Text(
-                          logicProvider.puzzle['options'][0].toString(),
-                        ),
+                    GameOptionButton(
+                      value: logicProvider.puzzle['options'][0],
+                      isPressed: logicProvider.pressed.contains(
+                        logicProvider.puzzle['options'][0],
                       ),
+                      onPressed: () {
+                        logicProvider.selectOption(
+                          logicProvider.puzzle['options'][0],
+                          context,
+                        );
+                      },
                     ),
                     const SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        key: ValueKey(
-                          logicProvider.puzzle['options'][1].toString(),
-                        ),
-                        onPressed:
-                            logicProvider.pressed.contains(
-                              logicProvider.puzzle['options'][1],
-                            )
-                            ? null
-                            : () {
-                                logicProvider.selectOption(
-                                  logicProvider.puzzle['options'][1],
-                                  context,
-                                );
-                              },
-                        child: Text(
-                          logicProvider.puzzle['options'][1].toString(),
-                        ),
+                    GameOptionButton(
+                      value: logicProvider.puzzle['options'][1],
+                      isPressed: logicProvider.pressed.contains(
+                        logicProvider.puzzle['options'][1],
                       ),
+                      onPressed: () {
+                        logicProvider.selectOption(
+                          logicProvider.puzzle['options'][1],
+                          context,
+                        );
+                      },
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        key: ValueKey(
-                          logicProvider.puzzle['options'][2].toString(),
-                        ),
-                        onPressed:
-                            logicProvider.pressed.contains(
-                              logicProvider.puzzle['options'][2],
-                            )
-                            ? null
-                            : () {
-                                logicProvider.selectOption(
-                                  logicProvider.puzzle['options'][2],
-                                  context,
-                                );
-                              },
-                        child: Text(
-                          logicProvider.puzzle['options'][2].toString(),
-                        ),
+                    GameOptionButton(
+                      value: logicProvider.puzzle['options'][2],
+                      isPressed: logicProvider.pressed.contains(
+                        logicProvider.puzzle['options'][2],
                       ),
+                      onPressed: () {
+                        logicProvider.selectOption(
+                          logicProvider.puzzle['options'][2],
+                          context,
+                        );
+                      },
                     ),
                     const SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        key: ValueKey(
-                          logicProvider.puzzle['options'][3].toString(),
-                        ),
-                        onPressed:
-                            logicProvider.pressed.contains(
-                              logicProvider.puzzle['options'][3],
-                            )
-                            ? null
-                            : () {
-                                logicProvider.selectOption(
-                                  logicProvider.puzzle['options'][3],
-                                  context,
-                                );
-                              },
-                        child: Text(
-                          logicProvider.puzzle['options'][3].toString(),
-                        ),
+                    GameOptionButton(
+                      value: logicProvider.puzzle['options'][3],
+                      isPressed: logicProvider.pressed.contains(
+                        logicProvider.puzzle['options'][3],
                       ),
+                      onPressed: () {
+                        logicProvider.selectOption(
+                          logicProvider.puzzle['options'][3],
+                          context,
+                        );
+                      },
                     ),
                   ],
                 ),
