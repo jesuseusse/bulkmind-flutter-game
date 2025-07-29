@@ -6,11 +6,8 @@ import 'package:mind_builder/features/spatial/presentation/spatial_screen.dart';
 import 'features/home/presentation/home_screen.dart';
 import 'features/auth/presentation/login_screen.dart';
 import 'features/onboarding/presentation/onboarding_screen.dart';
-import 'core/services/launch_service.dart';
 
 Future<GoRouter> createAppRouter() async {
-  final showOnboarding = await LaunchService.shouldShowOnboarding();
-
   return GoRouter(
     initialLocation: '/',
     routes: [

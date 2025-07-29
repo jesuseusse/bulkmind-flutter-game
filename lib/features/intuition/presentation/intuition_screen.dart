@@ -48,7 +48,7 @@ class IntuitionScreen extends StatelessWidget {
             body: GameContent(
               level: gameProvider.levelNumber,
               time: gameProvider.elapsedTimeFormatted,
-              title: "🤔",
+              title: Text("🤔"),
               feedbackIcon: feedbackIcon,
               question: Text(
                 colorName,

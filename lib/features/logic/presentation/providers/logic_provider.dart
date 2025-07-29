@@ -40,7 +40,7 @@ class LogicProvider extends ChangeNotifier {
   }
 
   void reset() {
-    level = 1;
+    level = 0;
     _generatePuzzle();
   }
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class GameContent extends StatelessWidget {
   final int level;
   final String time;
-  final String? title;
+  final Widget? title;
   final Widget feedbackIcon;
   final Widget question;
   final List<Widget> options;
@@ -44,12 +44,7 @@ class GameContent extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            if (title != null)
-              Text(
-                title!,
-                style: const TextStyle(fontSize: 48),
-                textAlign: TextAlign.center,
-              ),
+            if (title != null) title!,
             feedbackIcon,
             const SizedBox(height: 120),
             question,
