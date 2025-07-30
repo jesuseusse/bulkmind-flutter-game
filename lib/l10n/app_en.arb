@@ -30,5 +30,8 @@
 	"bestTime": "Best Time",
 	"yourScore": "Your Score",
 	"timeTaken": "Time Taken",
-	"levels": "Levels"
+	"levels": "Levels",
+	"level": "Level",
+	"time": "Time",
+	"incorrect": "Incorrect"
 }

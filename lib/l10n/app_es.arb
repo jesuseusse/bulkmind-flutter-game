@@ -30,5 +30,8 @@
 	"bestTime": "Mejor tiempo",
 	"yourScore": "Tu puntuación",
 	"timeTaken": "Tiempo",
-	"levels": "Niveles"
+	"levels": "Niveles",
+	"level": "Nivel",
+	"time": "Tiempo",
+	"incorrect": "Incorrecto"
 }

@@ -100,4 +100,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get levels => 'Niveles';
+
+  @override
+  String get level => 'Nivel';
+
+  @override
+  String get time => 'Tiempo';
+
+  @override
+  String get incorrect => 'Incorrecto';
 }

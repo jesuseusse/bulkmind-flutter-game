@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:mind_builder/core/database/game_database.dart';
 import 'package:mind_builder/features/memory/domain/usescases/generate_puzzle.dart';
+import 'package:mind_builder/l10n/app_localizations.dart';
 
 class MemoryProvider extends ChangeNotifier {
   int level = 0;
-
   Set<int> pressed = {};
+
+  Map<String, int> currentRecord = {};
 
   final Stopwatch _stopwatchTotalTime = Stopwatch();
 
@@ -24,12 +27,7 @@ class MemoryProvider extends ChangeNotifier {
   DateTime? startTime;
   double maxTime = 0;
 
-  double get initialPatternProgress {
-    if (startTime == null) return 0.0;
-    final elapsed = DateTime.now().difference(startTime!).inMilliseconds;
-    final progress = elapsed / 3000;
-    return progress.clamp(0.0, 1.0);
-  }
+  final _db = GameDataBase();
 
   String get elapsedTotalTimeFormatted => _elapsedTotalTimeFormatted;
 
@@ -38,6 +36,7 @@ class MemoryProvider extends ChangeNotifier {
   MemoryProvider() {
     _generatePuzzle();
     _startTotalTimeTimer();
+    _loadCurrentRecord();
   }
 
   @override
@@ -108,18 +107,41 @@ class MemoryProvider extends ChangeNotifier {
         notifyListeners();
       }
     } else {
-      // Incorrect tap: reset game and show error dialog
-      _showErrorDialog(context);
+      _stopwatchTotalTime.stop();
+      _inNewRecord().then((isRecord) {
+        if (context.mounted) {
+          _showErrorDialog(
+            context,
+            isRecord,
+            level - 1,
+            _stopwatchTotalTime.elapsedMilliseconds,
+          );
+        }
+        _stopTotalTimeTimer();
+      });
     }
   }
 
-  void _showErrorDialog(BuildContext context) {
+  void _showErrorDialog(
+    BuildContext context,
+    bool isRecord,
+    int level,
+    int time,
+  ) {
+    final localizations = AppLocalizations.of(context)!;
+    _saveData(level, time);
+
+    String formattedTime = _formatDuration(_stopwatchTotalTime.elapsed);
+    String contentText = isRecord
+        ? '${localizations.newRecord}: ${localizations.level} $level,  ${localizations.time} $formattedTime'
+        : '${localizations.level} $level, ${localizations.time} $formattedTime';
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
-        title: const Text('❌ Incorrecto'),
-        content: Text('Volviste al nivel 0'),
+        title: Text(localizations.incorrect),
+        content: Text(contentText),
         actions: [
           TextButton(
             onPressed: () {
@@ -127,11 +149,23 @@ class MemoryProvider extends ChangeNotifier {
               reset();
               notifyListeners();
             },
-            child: const Text('Reintentar'),
+            child: Text(localizations.restart),
           ),
         ],
       ),
     );
+  }
+
+  Future<bool> _inNewRecord() async {
+    return await _db.isNewRecord(
+      featureKey: 'memory',
+      level: level,
+      time: _stopwatchTotalTime.elapsedMilliseconds,
+    );
+  }
+
+  Future<void> _saveData(int level, int time) async {
+    await _db.saveGameData(featureKey: 'memory', level: level, time: time);
   }
 
   void _startTotalTimeTimer() {
@@ -161,5 +195,18 @@ class MemoryProvider extends ChangeNotifier {
         .toString()
         .padLeft(2, '0');
     return "$minutes:$seconds.$milliseconds";
+  }
+
+  Future<void> _loadCurrentRecord() async {
+    final data = await _db.loadGameData(featureKey: 'memory');
+    final maxLevel = data['maxLevel'] as int;
+    final bestTime = data['bestTime'] as int;
+
+    if (maxLevel > 0) {
+      currentRecord = {'maxLevel': maxLevel, 'bestTime': bestTime};
+    } else {
+      currentRecord = {};
+    }
+    notifyListeners();
   }
 }
