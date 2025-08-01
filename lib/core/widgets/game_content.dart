@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mind_builder/l10n/app_localizations.dart';
 
 class GameContent extends StatelessWidget {
   final int level;
@@ -20,6 +21,8 @@ class GameContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -27,7 +30,7 @@ class GameContent extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Level: $level',
+              '${localizations.level}: $level',
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -36,7 +39,7 @@ class GameContent extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Time: $time',
+              '${localizations.time}: $time',
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
