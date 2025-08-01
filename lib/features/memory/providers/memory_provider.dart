@@ -1,36 +1,34 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mind_builder/core/database/game_database.dart';
+import 'package:mind_builder/core/models/record.dart';
+import 'package:mind_builder/core/utils/time_utils.dart';
 import 'package:mind_builder/features/memory/domain/usescases/generate_puzzle.dart';
 import 'package:mind_builder/l10n/app_localizations.dart';
 
 class MemoryProvider extends ChangeNotifier {
-  int level = 16;
-  Set<int> pressed = {};
-
-  Map<String, int> currentRecord = {};
-
-  final Stopwatch _stopwatchTotalTime = Stopwatch();
-
-  Timer? _timerTotalTime;
-
-  String _elapsedTotalTimeFormatted = '00:00.00';
-
+  // Level settings
+  int level = 0;
   bool _showCorrectIconFeedback = false;
-
   int rows = 0;
   int columns = 0;
-
   late List<List<bool>> userPattern; // user pattern
   late List<List<bool>> initialPattern = []; // pattern to memorize
 
   DateTime? startTime;
   double maxTime = 0;
 
+  // DB records
   final _db = GameDataBase();
+  Record currentRecord = const Record(maxLevel: 0, bestTime: 0);
+
+  // Total timers
+  final Stopwatch _stopwatchTotalTime = Stopwatch();
+  Timer? _timerTotalTime;
+  String _elapsedTotalTimeFormatted = '00:00.00';
 
   String get elapsedTotalTimeFormatted => _elapsedTotalTimeFormatted;
-
   bool get showCorrectIconFeedback => _showCorrectIconFeedback;
 
   MemoryProvider() {
@@ -69,11 +67,12 @@ class MemoryProvider extends ChangeNotifier {
     _generatePuzzle();
   }
 
-  void reset() {
+  void _reset() {
     level = 0;
     _stopTotalTimeTimer();
     _startTotalTimeTimer();
     _generatePuzzle();
+    notifyListeners();
   }
 
   void handleCellTap(int row, int col, BuildContext context) {
@@ -110,10 +109,10 @@ class MemoryProvider extends ChangeNotifier {
       _stopwatchTotalTime.stop();
       _inNewRecord().then((isRecord) {
         if (context.mounted) {
-          _showErrorDialog(
+          _showGameOverDialog(
             context,
             isRecord,
-            level - 1,
+            level,
             _stopwatchTotalTime.elapsedMilliseconds,
           );
         }
@@ -122,32 +121,53 @@ class MemoryProvider extends ChangeNotifier {
     }
   }
 
-  void _showErrorDialog(
+  void _showGameOverDialog(
     BuildContext context,
     bool isRecord,
     int level,
     int time,
   ) {
     final localizations = AppLocalizations.of(context)!;
-    _saveData(level, time);
+    if (isRecord) _saveData(level, time);
+    String recordMessage = '';
 
-    String formattedTime = _formatDuration(_stopwatchTotalTime.elapsed);
-    String contentText = isRecord
-        ? '${localizations.newRecord}: ${localizations.level} $level,  ${localizations.time} $formattedTime'
-        : '${localizations.level} $level, ${localizations.time} $formattedTime';
+    recordMessage +=
+        '${localizations.yourScore}: $level ${localizations.levels}\n';
+    recordMessage +=
+        '${localizations.timeTaken}: ${formatDuration(Duration(milliseconds: time))}\n\n';
+
+    if (isRecord) {
+      recordMessage +=
+          '🎉 ${localizations.newRecord}: $level ${localizations.levels}\n';
+      recordMessage +=
+          '⏱️ ${localizations.newBestTime}: ${formatDuration(Duration(milliseconds: time))}';
+    } else {
+      recordMessage +=
+          '${localizations.maxLevel}: ${currentRecord.maxLevel} ${localizations.levels}\n';
+      if (currentRecord.bestTime != double.infinity) {
+        recordMessage +=
+            '⏱️ ${localizations.bestTime}: ${formatDuration(Duration(milliseconds: currentRecord.bestTime))}';
+      }
+    }
 
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: Text(localizations.incorrect),
-        content: Text(contentText),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(localizations.youAreALooser),
+        content: Text(recordMessage),
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop();
-              reset();
-              notifyListeners();
+              Navigator.of(dialogContext).pop();
+              GoRouter.of(context).go('/');
+            },
+            child: Text(localizations.back),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              _reset();
             },
             child: Text(localizations.restart),
           ),
@@ -156,23 +176,11 @@ class MemoryProvider extends ChangeNotifier {
     );
   }
 
-  Future<bool> _inNewRecord() async {
-    return await _db.isNewRecord(
-      featureKey: 'memory',
-      level: level,
-      time: _stopwatchTotalTime.elapsedMilliseconds,
-    );
-  }
-
-  Future<void> _saveData(int level, int time) async {
-    await _db.saveGameData(featureKey: 'memory', level: level, time: time);
-  }
-
   void _startTotalTimeTimer() {
     _stopwatchTotalTime.start();
     _timerTotalTime?.cancel();
     _timerTotalTime = Timer.periodic(const Duration(milliseconds: 100), (_) {
-      String newFormattedTime = _formatDuration(_stopwatchTotalTime.elapsed);
+      String newFormattedTime = formatDuration(_stopwatchTotalTime.elapsed);
       if (_elapsedTotalTimeFormatted != newFormattedTime) {
         _elapsedTotalTimeFormatted = newFormattedTime;
         notifyListeners();
@@ -186,15 +194,19 @@ class MemoryProvider extends ChangeNotifier {
     _timerTotalTime?.cancel();
   }
 
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    String minutes = twoDigits(duration.inMinutes.remainder(60));
-    String seconds = twoDigits(duration.inSeconds.remainder(60));
-    String milliseconds = (duration.inMilliseconds.remainder(1000) / 10)
-        .truncate()
-        .toString()
-        .padLeft(2, '0');
-    return "$minutes:$seconds.$milliseconds";
+  // db handlers
+  Future<bool> _inNewRecord() async {
+    return await _db.isNewRecord(
+      featureKey: 'memory',
+      level: level,
+      time: _stopwatchTotalTime.elapsedMilliseconds,
+    );
+  }
+
+  Future<void> _saveData(int level, int time) async {
+    await _db.saveGameData(featureKey: 'memory', level: level, time: time);
+    currentRecord = Record(maxLevel: level, bestTime: time);
+    notifyListeners();
   }
 
   Future<void> _loadCurrentRecord() async {
@@ -203,9 +215,9 @@ class MemoryProvider extends ChangeNotifier {
     final bestTime = data['bestTime'] as int;
 
     if (maxLevel > 0) {
-      currentRecord = {'maxLevel': maxLevel, 'bestTime': bestTime};
+      currentRecord = Record(maxLevel: maxLevel, bestTime: bestTime);
     } else {
-      currentRecord = {};
+      currentRecord = const Record(maxLevel: 0, bestTime: 0);
     }
     notifyListeners();
   }

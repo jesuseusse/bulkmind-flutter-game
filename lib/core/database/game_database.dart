@@ -34,6 +34,11 @@ class GameDataBase {
     );
   }
 
+  Future<void> resetDatabase() async {
+    final db = await database;
+    await db.delete('records');
+  }
+
   /// Check if the new score is a record
   Future<bool> isNewRecord({
     required String featureKey,
