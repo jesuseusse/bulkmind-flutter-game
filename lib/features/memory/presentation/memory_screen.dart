@@ -64,7 +64,15 @@ class MemoryScreen extends StatelessWidget {
                             child: ElevatedButton(
                               onPressed: () {
                                 if (showPattern) {
-                                  // showPattern = false; // Not needed, showPattern is now reactive
+                                  memoryProvider.startTime = DateTime.now()
+                                      .subtract(
+                                        Duration(
+                                          seconds:
+                                              (memoryProvider.maxTime * 0.5)
+                                                  .toInt() +
+                                              1,
+                                        ),
+                                      );
                                 }
                                 memoryProvider.handleCellTap(row, col, context);
                               },
@@ -82,7 +90,26 @@ class MemoryScreen extends StatelessWidget {
                                 ),
                                 minimumSize: const Size.fromHeight(60),
                               ),
-                              child: const SizedBox.shrink(),
+                              child: memoryProvider.userPattern[row][col]
+                                  ? LayoutBuilder(
+                                      builder: (context, constraints) {
+                                        final size = memoryProvider.level < 5
+                                            ? 48
+                                            : (constraints.maxWidth <
+                                                      constraints.maxHeight
+                                                  ? constraints.maxWidth * 0.6
+                                                  : constraints.maxHeight *
+                                                        0.6);
+                                        return Center(
+                                          child: Icon(
+                                            Icons.check_circle,
+                                            color: Colors.green,
+                                            size: size.toDouble(),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : const SizedBox.shrink(),
                             ),
                           ),
                         ),

@@ -5,7 +5,7 @@ import 'package:mind_builder/features/memory/domain/usescases/generate_puzzle.da
 import 'package:mind_builder/l10n/app_localizations.dart';
 
 class MemoryProvider extends ChangeNotifier {
-  int level = 0;
+  int level = 16;
   Set<int> pressed = {};
 
   Map<String, int> currentRecord = {};
