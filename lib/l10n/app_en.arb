@@ -34,5 +34,10 @@
 	"levels": "Levels",
 	"level": "Level",
 	"time": "Time",
-	"incorrect": "Incorrect"
+	"incorrect": "Incorrect",
+	"signUp": "Sign Up",
+	"signIn": "Sign In",
+	"email": "Email",
+	"password": "Password",
+	"goToHome": "Go to Home"
 }

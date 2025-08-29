@@ -112,4 +112,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get incorrect => 'Incorrect';
+
+  @override
+  String get signUp => 'Sign Up';
+
+  @override
+  String get signIn => 'Sign In';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get goToHome => 'Go to Home';
 }

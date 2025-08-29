@@ -1,3 +1,4 @@
+import 'package:bulkmind/features/auth/presentation/pages/signup_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bulkmind/features/intuition/presentation/intuition_screen.dart';
 import 'package:bulkmind/features/logic/presentation/logic_screen.dart';
@@ -21,6 +22,10 @@ Future<GoRouter> createAppRouter() async {
     routes: [
       GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+      GoRoute(
+        path: '/sign-up',
+        builder: (context, state) => const SignUpPage(),
+      ),
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),

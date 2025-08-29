@@ -34,5 +34,10 @@
 	"levels": "Niveles",
 	"level": "Nivel",
 	"time": "Tiempo",
-	"incorrect": "Incorrecto"
+	"incorrect": "Incorrecto",
+	"signUp": "Crear Cuenta",
+	"signIn": "Iniciar Sesión",
+	"email": "Correo Electrónico",
+	"password": "Contraseña",
+	"goToHome": "Ir al Home"
 }

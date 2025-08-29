@@ -3,7 +3,7 @@ import 'color_palette.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
-    fontFamily: 'monospace',
+    fontFamily: 'Courier New',
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.lightPrimary,
       brightness: Brightness.light,
@@ -35,10 +35,18 @@ class AppTheme {
         side: const BorderSide(color: Colors.white, width: 1),
       ),
     ),
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: Colors.white),
+      bodyMedium: TextStyle(color: Colors.white),
+    ),
+    inputDecorationTheme: const InputDecorationTheme(
+      hintStyle: TextStyle(color: Colors.white),
+      labelStyle: TextStyle(color: Colors.white),
+    ),
   );
 
   static ThemeData darkTheme = ThemeData(
-    fontFamily: 'monospace',
+    fontFamily: 'Courier New',
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.darkPrimary,
       brightness: Brightness.dark,
@@ -69,6 +77,14 @@ class AppTheme {
         borderRadius: BorderRadius.circular(2),
         side: const BorderSide(color: Colors.white, width: 1),
       ),
+    ),
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: Colors.white),
+      bodyMedium: TextStyle(color: Colors.white),
+    ),
+    inputDecorationTheme: const InputDecorationTheme(
+      hintStyle: TextStyle(color: Colors.white),
+      labelStyle: TextStyle(color: Colors.white),
     ),
   );
 }

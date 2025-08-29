@@ -112,4 +112,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get incorrect => 'Incorrecto';
+
+  @override
+  String get signUp => 'Crear Cuenta';
+
+  @override
+  String get signIn => 'Iniciar Sesión';
+
+  @override
+  String get email => 'Correo Electrónico';
+
+  @override
+  String get password => 'Contraseña';
+
+  @override
+  String get goToHome => 'Ir al Home';
 }
