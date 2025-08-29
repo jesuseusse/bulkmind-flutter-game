@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mind_builder/l10n/app_localizations.dart';
+import 'package:bulkmind/l10n/app_localizations.dart';
 
 class GameContent extends StatelessWidget {
   final int level;

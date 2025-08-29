@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mind_builder/core/widgets/base_scaffold.dart';
-import 'package:mind_builder/core/widgets/game_content.dart';
-import 'package:mind_builder/features/intuition/presentation/providers/intuition_game_provider.dart';
-import 'package:mind_builder/features/intuition/presentation/widgets/answer_feedback_icon.dart';
-import 'package:mind_builder/features/intuition/presentation/widgets/color_option_button.dart';
-import 'package:mind_builder/l10n/app_localizations.dart';
-import 'package:mind_builder/core/utils/app_localizations_utils.dart';
+import 'package:bulkmind/core/widgets/base_scaffold.dart';
+import 'package:bulkmind/core/widgets/game_content.dart';
+import 'package:bulkmind/features/intuition/presentation/providers/intuition_game_provider.dart';
+import 'package:bulkmind/features/intuition/presentation/widgets/answer_feedback_icon.dart';
+import 'package:bulkmind/features/intuition/presentation/widgets/color_option_button.dart';
+import 'package:bulkmind/l10n/app_localizations.dart';
+import 'package:bulkmind/core/utils/app_localizations_utils.dart';
 import 'package:provider/provider.dart';
 
 class IntuitionScreen extends StatelessWidget {

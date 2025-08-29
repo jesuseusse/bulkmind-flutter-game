@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mind_builder/core/widgets/base_scaffold.dart';
-import 'package:mind_builder/l10n/app_localizations.dart';
+import 'package:bulkmind/core/widgets/base_scaffold.dart';
+import 'package:bulkmind/l10n/app_localizations.dart';
 
 class SpatialScreen extends StatelessWidget {
   const SpatialScreen({super.key});

@@ -28,9 +28,9 @@ class HomeScreen extends StatelessWidget {
                 onTap: () => context.go('/intuition'),
               ),
               _GameCard(
-                title: AppLocalizations.of(context)!.memory,
+                title: AppLocalizations.of(context)!.patterns,
                 icon: Icons.memory,
-                onTap: () => context.go('/memory'),
+                onTap: () => context.go('/patterns'),
               ),
               _GameCard(
                 title: AppLocalizations.of(context)!.spatial,

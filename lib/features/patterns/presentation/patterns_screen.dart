@@ -1,51 +1,51 @@
 import 'package:flutter/material.dart';
-import 'package:mind_builder/core/widgets/base_scaffold.dart';
-import 'package:mind_builder/core/widgets/game_content.dart';
-import 'package:mind_builder/features/memory/providers/memory_provider.dart';
-import 'package:mind_builder/l10n/app_localizations.dart';
+import 'package:bulkmind/core/widgets/base_scaffold.dart';
+import 'package:bulkmind/core/widgets/game_content.dart';
+import 'package:bulkmind/features/patterns/providers/patterns_provider.dart';
+import 'package:bulkmind/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
-class MemoryScreen extends StatelessWidget {
-  const MemoryScreen({super.key});
+class PatternsScreen extends StatelessWidget {
+  const PatternsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => MemoryProvider(),
-      child: Consumer<MemoryProvider>(
-        builder: (context, memoryProvider, _) {
+      create: (_) => PatternsProvider(),
+      child: Consumer<PatternsProvider>(
+        builder: (context, patternsProvider, _) {
           return StreamBuilder<int>(
             stream: Stream.periodic(
               const Duration(milliseconds: 100),
               (x) => x,
             ),
             builder: (context, snapshot) {
-              int totalRows = memoryProvider.rows;
-              int totalColumns = memoryProvider.columns;
+              int totalRows = patternsProvider.rows;
+              int totalColumns = patternsProvider.columns;
               bool showPattern =
-                  memoryProvider.startTime != null &&
+                  patternsProvider.startTime != null &&
                   DateTime.now()
-                          .difference(memoryProvider.startTime!)
+                          .difference(patternsProvider.startTime!)
                           .inSeconds <
-                      memoryProvider.maxTime * 0.5;
+                      patternsProvider.maxTime * 0.5;
               return BaseScaffold(
-                title: AppLocalizations.of(context)!.memory,
+                title: AppLocalizations.of(context)!.patterns,
                 body: GameContent(
-                  level: memoryProvider.level,
-                  time: memoryProvider.elapsedTotalTimeFormatted,
+                  level: patternsProvider.level,
+                  time: patternsProvider.elapsedTotalTimeFormatted,
                   title: LinearProgressIndicator(
                     value:
                         1 -
                         (DateTime.now()
-                                .difference(memoryProvider.startTime!)
+                                .difference(patternsProvider.startTime!)
                                 .inMilliseconds /
-                            (memoryProvider.maxTime *
+                            (patternsProvider.maxTime *
                                 1000)), // progress decreases from 1 to 0
                     minHeight: 8,
                     backgroundColor: Colors.grey.shade800,
                     color: Colors.green,
                   ),
-                  feedbackIcon: memoryProvider.showCorrectIconFeedback
+                  feedbackIcon: patternsProvider.showCorrectIconFeedback
                       ? const Icon(
                           Icons.check_circle,
                           color: Colors.green,
@@ -64,24 +64,28 @@ class MemoryScreen extends StatelessWidget {
                             child: ElevatedButton(
                               onPressed: () {
                                 if (showPattern) {
-                                  memoryProvider.startTime = DateTime.now()
+                                  patternsProvider.startTime = DateTime.now()
                                       .subtract(
                                         Duration(
                                           seconds:
-                                              (memoryProvider.maxTime * 0.5)
+                                              (patternsProvider.maxTime * 0.5)
                                                   .toInt() +
                                               1,
                                         ),
                                       );
                                 }
-                                memoryProvider.handleCellTap(row, col, context);
+                                patternsProvider.handleCellTap(
+                                  row,
+                                  col,
+                                  context,
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: showPattern
-                                    ? (memoryProvider.initialPattern[row][col]
+                                    ? (patternsProvider.initialPattern[row][col]
                                           ? Colors.green
                                           : Colors.grey.shade800)
-                                    : (memoryProvider.userPattern[row][col]
+                                    : (patternsProvider.userPattern[row][col]
                                           ? Colors.green
                                           : Colors.grey.shade800),
                                 foregroundColor: Colors.white,
@@ -90,10 +94,10 @@ class MemoryScreen extends StatelessWidget {
                                 ),
                                 minimumSize: const Size.fromHeight(60),
                               ),
-                              child: memoryProvider.userPattern[row][col]
+                              child: patternsProvider.userPattern[row][col]
                                   ? LayoutBuilder(
                                       builder: (context, constraints) {
-                                        final size = memoryProvider.level < 5
+                                        final size = patternsProvider.level < 5
                                             ? 48
                                             : (constraints.maxWidth <
                                                       constraints.maxHeight

@@ -125,7 +125,7 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
-  /// **'Mind Builder'**
+  /// **'Bulk Mind'**
   String get appName;
 
   /// No description provided for @red.
@@ -229,6 +229,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Memory'**
   String get memory;
+
+  /// No description provided for @patterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Patterns'**
+  String get patterns;
 
   /// No description provided for @spatial.
   ///

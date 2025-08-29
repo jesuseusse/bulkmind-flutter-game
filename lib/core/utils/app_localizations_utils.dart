@@ -1,4 +1,4 @@
-import 'package:mind_builder/l10n/app_localizations.dart';
+import 'package:bulkmind/l10n/app_localizations.dart';
 
 String getColorName(String key, AppLocalizations loc) {
   // Use a Map for O(1) lookup instead of a switch for potentially many cases

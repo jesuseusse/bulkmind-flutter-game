@@ -21,7 +21,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get restart => 'Restart';
 
   @override
-  String get appName => 'Mind Builder';
+  String get appName => 'Bulk Mind';
 
   @override
   String get red => 'Red';
@@ -73,6 +73,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get memory => 'Memory';
+
+  @override
+  String get patterns => 'Patterns';
 
   @override
   String get spatial => 'Spatial';

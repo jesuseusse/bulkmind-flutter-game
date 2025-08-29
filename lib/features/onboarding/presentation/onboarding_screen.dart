@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mind_builder/core/services/launch_service.dart';
-import 'package:mind_builder/features/intuition/domain/entities/color_game_data.dart';
-import 'package:mind_builder/l10n/app_localizations.dart';
-import 'package:mind_builder/features/onboarding/domain/usecases/generate_color_game.dart';
+import 'package:bulkmind/core/services/launch_service.dart';
+import 'package:bulkmind/features/intuition/domain/entities/color_game_data.dart';
+import 'package:bulkmind/l10n/app_localizations.dart';
+import 'package:bulkmind/features/onboarding/domain/usecases/generate_color_game.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});

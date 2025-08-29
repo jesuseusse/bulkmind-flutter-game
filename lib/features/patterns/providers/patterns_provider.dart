@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mind_builder/core/database/game_database.dart';
-import 'package:mind_builder/core/models/record.dart';
-import 'package:mind_builder/core/utils/time_utils.dart';
-import 'package:mind_builder/features/memory/domain/usescases/generate_puzzle.dart';
-import 'package:mind_builder/l10n/app_localizations.dart';
+import 'package:bulkmind/core/database/game_database.dart';
+import 'package:bulkmind/core/models/record.dart';
+import 'package:bulkmind/core/utils/time_utils.dart';
+import 'package:bulkmind/features/patterns/domain/usescases/generate_puzzle.dart';
+import 'package:bulkmind/l10n/app_localizations.dart';
 
-class MemoryProvider extends ChangeNotifier {
+class PatternsProvider extends ChangeNotifier {
   // Level settings
   int level = 0;
   bool _showCorrectIconFeedback = false;
@@ -31,7 +31,7 @@ class MemoryProvider extends ChangeNotifier {
   String get elapsedTotalTimeFormatted => _elapsedTotalTimeFormatted;
   bool get showCorrectIconFeedback => _showCorrectIconFeedback;
 
-  MemoryProvider() {
+  PatternsProvider() {
     _generatePuzzle();
     _startTotalTimeTimer();
     _loadCurrentRecord();
@@ -107,17 +107,12 @@ class MemoryProvider extends ChangeNotifier {
       }
     } else {
       _stopwatchTotalTime.stop();
-      _inNewRecord().then((isRecord) {
-        if (context.mounted) {
-          _showGameOverDialog(
-            context,
-            isRecord,
-            level,
-            _stopwatchTotalTime.elapsedMilliseconds,
-          );
-        }
-        _stopTotalTimeTimer();
-      });
+      int time = _stopwatchTotalTime.elapsedMilliseconds;
+      bool isRecord = _inNewRecord(time);
+      _stopTotalTimeTimer();
+      if (context.mounted) {
+        _showGameOverDialog(context, isRecord, level, time);
+      }
     }
   }
 
@@ -194,23 +189,27 @@ class MemoryProvider extends ChangeNotifier {
     _timerTotalTime?.cancel();
   }
 
-  // db handlers
-  Future<bool> _inNewRecord() async {
-    return await _db.isNewRecord(
-      featureKey: 'memory',
-      level: level,
-      time: _stopwatchTotalTime.elapsedMilliseconds,
-    );
+  bool _inNewRecord(int elapsedTime) {
+    if (level > currentRecord.maxLevel) {
+      return true;
+    }
+
+    if (level == currentRecord.maxLevel &&
+        elapsedTime < currentRecord.bestTime) {
+      return true;
+    }
+
+    return false;
   }
 
   Future<void> _saveData(int level, int time) async {
-    await _db.saveGameData(featureKey: 'memory', level: level, time: time);
+    await _db.saveGameData(featureKey: 'patterns', level: level, time: time);
     currentRecord = Record(maxLevel: level, bestTime: time);
     notifyListeners();
   }
 
   Future<void> _loadCurrentRecord() async {
-    final data = await _db.loadGameData(featureKey: 'memory');
+    final data = await _db.loadGameData(featureKey: 'patterns');
     final maxLevel = data['maxLevel'] as int;
     final bestTime = data['bestTime'] as int;
 

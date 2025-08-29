@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:mind_builder/features/logic/presentation/domain/usecases/generate_logic_puzzle.dart';
+import 'package:bulkmind/features/logic/presentation/domain/usecases/generate_logic_puzzle.dart';
 
 class LogicProvider extends ChangeNotifier {
   int level = 0;
