@@ -39,5 +39,14 @@
 	"signIn": "Sign In",
 	"email": "Email",
 	"password": "Password",
-	"goToHome": "Go to Home"
+	"confirmPassword": "Confirm Password",
+	"passwordsDoNotMatch": "Passwords do not match",
+	"passwordInvalid": "Password must be at least 9 characters and include uppercase, lowercase, a number, and a special character.",
+	"goToHome": "Go to Home",
+	"loginWithGoogle": "Login with Google",
+	"fullName": "Full Name",
+	"age": "Age",
+	"birthday": "Birthday",
+	"profile": "Profile",
+	"logout": "Log out"
 }

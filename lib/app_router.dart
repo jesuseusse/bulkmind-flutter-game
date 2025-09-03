@@ -7,18 +7,33 @@ import 'package:bulkmind/features/spatial/presentation/spatial_screen.dart';
 import 'features/home/presentation/home_screen.dart';
 import 'features/auth/presentation/pages/login_screen.dart';
 import 'features/onboarding/presentation/onboarding_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:flutter/foundation.dart';
+import 'dart:async';
+import 'features/profile/presentation/profile_screen.dart';
 
-/// This is a placeholder for your actual user authentication check.
-/// For example, with Firebase Auth, you would check if FirebaseAuth.instance.currentUser is not null.
-bool isUserLoggedIn() {
-  // Replace this logic with your actual user verification.
-  // For this example, it returns false to demonstrate the redirect to the login screen.
-  return false;
+/// Simple ChangeNotifier that notifies GoRouter on auth state changes.
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    _subscription = stream.asBroadcastStream().listen((_) => notifyListeners());
+  }
+
+  late final StreamSubscription<dynamic> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 }
 
 Future<GoRouter> createAppRouter() async {
+  final auth = firebase_auth.FirebaseAuth.instance;
+  bool isLoggedIn() => auth.currentUser != null;
+
   return GoRouter(
     initialLocation: '/',
+    refreshListenable: GoRouterRefreshStream(auth.authStateChanges()),
     routes: [
       GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
@@ -43,23 +58,28 @@ Future<GoRouter> createAppRouter() async {
         path: '/spatial',
         builder: (context, state) => const SpatialScreen(),
       ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfileScreen(),
+      ),
     ],
     redirect: (context, state) {
       // List of routes that do not require authentication.
-      final publicRoutes = ['/login', '/onboarding'];
+      final publicRoutes = ['/login', '/onboarding', '/sign-up'];
 
       // Check if the user is logged in.
-      final bool isLoggedIn = isUserLoggedIn();
+      final bool loggedIn = isLoggedIn();
 
       // If the user is not logged in AND the route they are trying to access
       // is not a public route, redirect them to the login screen.
-      if (!isLoggedIn && !publicRoutes.contains(state.uri.toString())) {
+      final path = state.uri.path;
+      if (!loggedIn && !publicRoutes.contains(path)) {
         return '/login';
       }
 
       // If the user is logged in and tries to go to a public route like login or onboarding,
       // redirect them to the main screen.
-      if (isLoggedIn && publicRoutes.contains(state.uri.toString())) {
+      if (loggedIn && publicRoutes.contains(path)) {
         return '/';
       }
 

@@ -1,5 +1,5 @@
 name: bulkmind
-description: 'A new Flutter project.'
+description: 'A new Game project.'
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  cloud_firestore: ^6.0.1
   cupertino_icons: ^1.0.8
   firebase_auth: ^6.0.1
   firebase_core: ^4.0.0

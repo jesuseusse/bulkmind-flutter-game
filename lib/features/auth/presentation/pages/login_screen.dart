@@ -1,6 +1,7 @@
 import 'package:bulkmind/l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -64,7 +65,8 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: AutofillGroup(
+          child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
@@ -74,6 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 border: const OutlineInputBorder(),
               ),
               keyboardType: TextInputType.emailAddress,
+              autofillHints: const [AutofillHints.username, AutofillHints.email],
             ),
             const SizedBox(height: 16),
 
@@ -94,6 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               obscureText: !_passwordVisible,
+              autofillHints: const [AutofillHints.password],
             ),
             const SizedBox(height: 16),
             _isLoading
@@ -108,10 +112,11 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Text(localizations.goToHome),
             ),
             TextButton(
-              onPressed: () => context.go('/sign-in'),
+              onPressed: () => context.go('/sign-up'),
               child: Text(localizations.signUp),
             ),
           ],
+          ),
         ),
       ),
     );

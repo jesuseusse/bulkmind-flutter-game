@@ -10,8 +10,13 @@ class AppTheme {
     ),
     scaffoldBackgroundColor: AppColors.lightBackground,
     appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black,
       foregroundColor: Colors.black,
+      titleTextStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -43,6 +48,12 @@ class AppTheme {
       hintStyle: TextStyle(color: Colors.white),
       labelStyle: TextStyle(color: Colors.white),
     ),
+    listTileTheme: const ListTileThemeData(
+      textColor: Colors.white,
+      iconColor: Colors.white,
+      titleTextStyle: TextStyle(color: Colors.white),
+      subtitleTextStyle: TextStyle(color: Colors.white),
+    ),
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -53,8 +64,13 @@ class AppTheme {
     ),
     scaffoldBackgroundColor: AppColors.darkBackground,
     appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF1F1F1F),
+      backgroundColor: Colors.black,
       foregroundColor: Colors.white,
+      titleTextStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -85,6 +101,12 @@ class AppTheme {
     inputDecorationTheme: const InputDecorationTheme(
       hintStyle: TextStyle(color: Colors.white),
       labelStyle: TextStyle(color: Colors.white),
+    ),
+    listTileTheme: const ListTileThemeData(
+      textColor: Colors.white,
+      iconColor: Colors.white,
+      titleTextStyle: TextStyle(color: Colors.white),
+      subtitleTextStyle: TextStyle(color: Colors.white),
     ),
   );
 }

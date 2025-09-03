@@ -126,5 +126,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get password => 'Password';
 
   @override
+  String get confirmPassword => 'Confirm Password';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get passwordInvalid =>
+      'Password must be at least 9 characters and include uppercase, lowercase, a number, and a special character.';
+
+  @override
   String get goToHome => 'Go to Home';
+
+  @override
+  String get loginWithGoogle => 'Login with Google';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get age => 'Age';
+
+  @override
+  String get birthday => 'Birthday';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get logout => 'Log out';
 }

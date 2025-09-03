@@ -39,5 +39,14 @@
 	"signIn": "Iniciar Sesión",
 	"email": "Correo Electrónico",
 	"password": "Contraseña",
-	"goToHome": "Ir al Home"
+	"confirmPassword": "Confirmar Contraseña",
+	"passwordsDoNotMatch": "Las contraseñas no coinciden",
+	"passwordInvalid": "La contraseña debe tener al menos 9 caracteres e incluir mayúsculas, minúsculas, un número y un carácter especial.",
+	"goToHome": "Ir al Home",
+	"loginWithGoogle": "Iniciar sesión con Google",
+	"fullName": "Nombre Completo",
+	"age": "Edad",
+	"birthday": "Fecha de nacimiento",
+	"profile": "Perfil",
+	"logout": "Cerrar sesión"
 }
