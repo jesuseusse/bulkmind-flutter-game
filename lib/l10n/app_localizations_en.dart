@@ -155,4 +155,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logout => 'Log out';
+
+  @override
+  String get continueWithOutSignIn => 'Continue without signing in';
 }

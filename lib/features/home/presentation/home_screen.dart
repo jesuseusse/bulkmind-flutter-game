@@ -21,31 +21,21 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: GridView.count(
-            crossAxisCount: 2,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            shrinkWrap: true,
+          child: Column(
             children: [
+              const Spacer(),
               _GameCard(
                 title: AppLocalizations.of(context)!.logic,
                 icon: Icons.calculate,
                 onTap: () => context.go('/logic'),
               ),
-              _GameCard(
-                title: AppLocalizations.of(context)!.intuition,
-                icon: Icons.flash_on,
-                onTap: () => context.go('/intuition'),
-              ),
-              _GameCard(
-                title: AppLocalizations.of(context)!.patterns,
-                icon: Icons.memory,
-                onTap: () => context.go('/patterns'),
-              ),
-              _GameCard(
-                title: AppLocalizations.of(context)!.spatial,
-                icon: Icons.grid_view,
-                onTap: () => context.go('/spatial'),
+              const Spacer(),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => context.go('/get-full-games'),
+                  child: const Text('Get full games'),
+                ),
               ),
             ],
           ),
@@ -72,25 +62,29 @@ class _GameCard extends StatelessWidget {
       onTap: () {
         onTap();
       },
-      child: Card(
-        color: Theme.of(context).colorScheme.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        elevation: 4,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 48),
-              const SizedBox(height: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+      child: SizedBox(
+        width: 150,
+        height: 150,
+        child: Card(
+          color: Theme.of(context).colorScheme.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          elevation: 4,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 48),
+                const SizedBox(height: 8),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

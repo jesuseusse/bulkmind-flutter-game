@@ -48,5 +48,6 @@
 	"age": "Age",
 	"birthday": "Birthday",
 	"profile": "Profile",
-	"logout": "Log out"
+	"logout": "Log out",
+	"continueWithOutSignIn": "Continue without signing in"
 }

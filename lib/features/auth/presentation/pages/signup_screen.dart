@@ -55,6 +55,9 @@ class _SignUpPageState extends State<SignUpPage> {
     return null;
   }
 
+  // The helper method to calculate age is no longer needed here,
+  // as the use case now accepts the DateTime object directly.
+
   Future<void> _signUp() async {
     final localizations = AppLocalizations.of(context)!;
 
@@ -93,6 +96,7 @@ class _SignUpPageState extends State<SignUpPage> {
     });
 
     try {
+      // The use case now directly accepts the birthday as a DateTime object.
       await _signUpUseCase.call(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
@@ -163,9 +167,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   autofillHints: const [AutofillHints.birthday],
                   onTap: () async {
                     final now = DateTime.now();
-                    final initial =
-                        _birthDate ??
-                        DateTime(now.year - 18, now.month, now.day);
+                    final initial = _birthDate;
                     final picked = await showDatePicker(
                       context: context,
                       initialDate: initial,
@@ -258,17 +260,22 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                 const SizedBox(height: 16),
                 // Sign-up with Google Button.
-                ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement Google sign-in logic here using the AuthRepository.
-                  },
-                  child: Text(localizations.loginWithGoogle),
-                ),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     // TODO: Implement Google sign-in logic here using the AuthRepository.
+                //   },
+                //   child: Text(localizations.loginWithGoogle),
+                // ),
                 const SizedBox(height: 16),
                 // Navigate to sign-in page.
                 TextButton(
                   onPressed: () => context.go('/sign-in'),
                   child: Text(localizations.signIn),
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => context.go('/'),
+                  child: Text(localizations.continueWithOutSignIn),
                 ),
               ],
             ),

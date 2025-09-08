@@ -391,6 +391,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Log out'**
   String get logout;
+
+  /// No description provided for @continueWithOutSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue without signing in'**
+  String get continueWithOutSignIn;
 }
 
 class _AppLocalizationsDelegate

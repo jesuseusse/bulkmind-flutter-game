@@ -155,4 +155,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get logout => 'Cerrar sesión';
+
+  @override
+  String get continueWithOutSignIn => 'Continuar sin iniciar sesión';
 }

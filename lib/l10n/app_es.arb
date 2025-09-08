@@ -48,5 +48,6 @@
 	"age": "Edad",
 	"birthday": "Fecha de nacimiento",
 	"profile": "Perfil",
-	"logout": "Cerrar sesión"
+	"logout": "Cerrar sesión",
+	"continueWithOutSignIn": "Continuar sin iniciar sesión"
 }
