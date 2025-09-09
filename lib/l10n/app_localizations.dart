@@ -397,6 +397,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue without signing in'**
   String get continueWithOutSignIn;
+
+  /// No description provided for @getAllGamesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get All Games'**
+  String get getAllGamesTitle;
+
+  /// No description provided for @annualSubscriptionPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual subscription price: {price}'**
+  String annualSubscriptionPrice(Object price);
+
+  /// No description provided for @discountCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount code'**
+  String get discountCodeLabel;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @finalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Final price: {price}'**
+  String finalPrice(Object price);
+
+  /// No description provided for @finalPriceWithOriginal.
+  ///
+  /// In en, this message translates to:
+  /// **'Final price: {finalPrice} (was {originalPrice})'**
+  String finalPriceWithOriginal(Object finalPrice, Object originalPrice);
+
+  /// No description provided for @appliedCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied code: {code}'**
+  String appliedCode(Object code);
+
+  /// No description provided for @priceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Price unavailable'**
+  String get priceUnavailable;
+
+  /// No description provided for @failedToLoadPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load price'**
+  String get failedToLoadPrice;
+
+  /// No description provided for @discountApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount code applied'**
+  String get discountApplied;
+
+  /// No description provided for @invalidOrExpiredCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid or expired code'**
+  String get invalidOrExpiredCode;
+
+  /// No description provided for @couldNotApplyCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not apply code'**
+  String get couldNotApplyCode;
+
+  /// No description provided for @purchaseAnnualSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase annual subscription'**
+  String get purchaseAnnualSubscription;
+
+  /// No description provided for @purchaseFlowStub.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase flow would start here (Stripe)'**
+  String get purchaseFlowStub;
 }
 
 class _AppLocalizationsDelegate

@@ -44,5 +44,24 @@ class UserRepositoryInMemory implements UserRepository {
     scheduleMicrotask(() => ctrl.add(existing));
     return ctrl.stream;
   }
-}
 
+  @override
+  Future<void> updateSubscription(
+    String uid, {
+    DateTime? subscriptionExpiresAt,
+    String? subscriptionMethod,
+  }) async {
+    final current = await getById(uid);
+    final updated = domain.User(
+      uid: current.uid,
+      email: current.email,
+      fullName: current.fullName,
+      birthday: current.birthday,
+      subscriptionExpiresAt:
+          subscriptionExpiresAt ?? current.subscriptionExpiresAt,
+      subscriptionMethod: subscriptionMethod ?? current.subscriptionMethod,
+    );
+    _store[uid] = updated;
+    _controllerFor(uid).add(updated);
+  }
+}

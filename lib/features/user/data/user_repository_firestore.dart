@@ -20,19 +20,41 @@ class FirestoreUserRepository implements UserRepository {
     } else {
       birthday = DateTime(1970, 1, 1);
     }
+    // subscriptionExpiresAt can be a Firestore Timestamp or an ISO string
+    final expiresRaw = data['subscriptionExpiresAt'];
+    DateTime? subscriptionExpiresAt;
+    if (expiresRaw is Timestamp) {
+      subscriptionExpiresAt = expiresRaw.toDate();
+    } else if (expiresRaw is String) {
+      subscriptionExpiresAt = DateTime.tryParse(expiresRaw);
+    }
+
+    final String? subscriptionMethod =
+        data['subscriptionMethod'] is String ? data['subscriptionMethod'] as String : null;
     return domain.User(
       uid: uid,
       email: data['email'] as String,
       fullName: data['fullName'] as String,
       birthday: birthday,
+      subscriptionExpiresAt: subscriptionExpiresAt,
+      subscriptionMethod: subscriptionMethod,
     );
   }
 
-  Map<String, dynamic> _toMap(domain.User user) => {
-        'email': user.email,
-        'fullName': user.fullName,
-        'birthday': Timestamp.fromDate(user.birthday),
-      };
+  Map<String, dynamic> _toMap(domain.User user) {
+    final map = <String, dynamic>{
+      'email': user.email,
+      'fullName': user.fullName,
+      'birthday': Timestamp.fromDate(user.birthday),
+    };
+    if (user.subscriptionExpiresAt != null) {
+      map['subscriptionExpiresAt'] = Timestamp.fromDate(user.subscriptionExpiresAt!);
+    }
+    if (user.subscriptionMethod != null) {
+      map['subscriptionMethod'] = user.subscriptionMethod;
+    }
+    return map;
+  }
 
   @override
   Future<void> create(domain.User user) async {
@@ -59,5 +81,23 @@ class FirestoreUserRepository implements UserRepository {
       final data = snap.data()!;
       return _fromDoc(snap.id, data);
     });
+  }
+
+  @override
+  Future<void> updateSubscription(
+    String uid, {
+    DateTime? subscriptionExpiresAt,
+    String? subscriptionMethod,
+  }) async {
+    final update = <String, dynamic>{};
+    if (subscriptionExpiresAt != null) {
+      update['subscriptionExpiresAt'] =
+          Timestamp.fromDate(subscriptionExpiresAt);
+    }
+    if (subscriptionMethod != null) {
+      update['subscriptionMethod'] = subscriptionMethod;
+    }
+    if (update.isEmpty) return; // nothing to do
+    await _usersCol.doc(uid).set(update, SetOptions(merge: true));
   }
 }

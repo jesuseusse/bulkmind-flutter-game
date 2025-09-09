@@ -1,9 +1,12 @@
+import 'package:bulkmind/features/paywall/presentation/get_all_games_screen.dart';
+import 'package:bulkmind/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
-import '../../../../l10n/app_localizations.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  static const routeName = "/";
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +36,8 @@ class HomeScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => context.go('/get-full-games'),
-                  child: const Text('Get full games'),
+                  onPressed: () => context.go(GetAllGamesScreen.routeName),
+                  child: Text(AppLocalizations.of(context)!.getAllGamesTitle),
                 ),
               ),
             ],
@@ -58,6 +61,7 @@ class _GameCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color textColor = Theme.of(context).colorScheme.surface;
     return InkWell(
       onTap: () {
         onTap();
@@ -66,21 +70,21 @@ class _GameCard extends StatelessWidget {
         width: 150,
         height: 150,
         child: Card(
-          color: Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).colorScheme.inverseSurface,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           elevation: 4,
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: 48),
+                Icon(icon, size: 48, color: textColor),
                 const SizedBox(height: 8),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: textColor,
                   ),
                 ),
               ],

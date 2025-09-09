@@ -6,5 +6,12 @@ abstract class UserRepository {
   Future<void> create(User user);
   Future<void> update(User user);
   Stream<User?> watchById(String uid);
-}
 
+  /// Partially updates subscription fields for a user.
+  /// Only non-null parameters are updated.
+  Future<void> updateSubscription(
+    String uid, {
+    DateTime? subscriptionExpiresAt,
+    String? subscriptionMethod,
+  });
+}

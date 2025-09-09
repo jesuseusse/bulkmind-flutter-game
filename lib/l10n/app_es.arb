@@ -49,5 +49,19 @@
 	"birthday": "Fecha de nacimiento",
 	"profile": "Perfil",
 	"logout": "Cerrar sesión",
-	"continueWithOutSignIn": "Continuar sin iniciar sesión"
+	"continueWithOutSignIn": "Continuar sin iniciar sesión",
+	"getAllGamesTitle": "Obtener todos los juegos",
+	"annualSubscriptionPrice": "Precio de suscripción anual: {price}",
+	"discountCodeLabel": "Código de descuento",
+	"apply": "Aplicar",
+	"finalPrice": "Precio final: {price}",
+	"finalPriceWithOriginal": "Precio final: {finalPrice} (antes {originalPrice})",
+	"appliedCode": "Código aplicado: {code}",
+	"priceUnavailable": "Precio no disponible",
+	"failedToLoadPrice": "No se pudo cargar el precio",
+	"discountApplied": "Código de descuento aplicado",
+	"invalidOrExpiredCode": "Código inválido o expirado",
+	"couldNotApplyCode": "No se pudo aplicar el código",
+	"purchaseAnnualSubscription": "Comprar suscripción anual",
+	"purchaseFlowStub": "Aquí iniciaría el flujo de compra (Stripe)"
 }

@@ -158,4 +158,54 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get continueWithOutSignIn => 'Continuar sin iniciar sesión';
+
+  @override
+  String get getAllGamesTitle => 'Obtener todos los juegos';
+
+  @override
+  String annualSubscriptionPrice(Object price) {
+    return 'Precio de suscripción anual: $price';
+  }
+
+  @override
+  String get discountCodeLabel => 'Código de descuento';
+
+  @override
+  String get apply => 'Aplicar';
+
+  @override
+  String finalPrice(Object price) {
+    return 'Precio final: $price';
+  }
+
+  @override
+  String finalPriceWithOriginal(Object finalPrice, Object originalPrice) {
+    return 'Precio final: $finalPrice (antes $originalPrice)';
+  }
+
+  @override
+  String appliedCode(Object code) {
+    return 'Código aplicado: $code';
+  }
+
+  @override
+  String get priceUnavailable => 'Precio no disponible';
+
+  @override
+  String get failedToLoadPrice => 'No se pudo cargar el precio';
+
+  @override
+  String get discountApplied => 'Código de descuento aplicado';
+
+  @override
+  String get invalidOrExpiredCode => 'Código inválido o expirado';
+
+  @override
+  String get couldNotApplyCode => 'No se pudo aplicar el código';
+
+  @override
+  String get purchaseAnnualSubscription => 'Comprar suscripción anual';
+
+  @override
+  String get purchaseFlowStub => 'Aquí iniciaría el flujo de compra (Stripe)';
 }

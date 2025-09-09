@@ -158,4 +158,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get continueWithOutSignIn => 'Continue without signing in';
+
+  @override
+  String get getAllGamesTitle => 'Get All Games';
+
+  @override
+  String annualSubscriptionPrice(Object price) {
+    return 'Annual subscription price: $price';
+  }
+
+  @override
+  String get discountCodeLabel => 'Discount code';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String finalPrice(Object price) {
+    return 'Final price: $price';
+  }
+
+  @override
+  String finalPriceWithOriginal(Object finalPrice, Object originalPrice) {
+    return 'Final price: $finalPrice (was $originalPrice)';
+  }
+
+  @override
+  String appliedCode(Object code) {
+    return 'Applied code: $code';
+  }
+
+  @override
+  String get priceUnavailable => 'Price unavailable';
+
+  @override
+  String get failedToLoadPrice => 'Failed to load price';
+
+  @override
+  String get discountApplied => 'Discount code applied';
+
+  @override
+  String get invalidOrExpiredCode => 'Invalid or expired code';
+
+  @override
+  String get couldNotApplyCode => 'Could not apply code';
+
+  @override
+  String get purchaseAnnualSubscription => 'Purchase annual subscription';
+
+  @override
+  String get purchaseFlowStub => 'Purchase flow would start here (Stripe)';
 }

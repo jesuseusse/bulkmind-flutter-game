@@ -11,7 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'features/profile/presentation/profile_screen.dart';
-import 'features/paywall/presentation/get_full_games_screen.dart';
+import 'features/paywall/presentation/get_all_games_screen.dart';
 
 /// Simple ChangeNotifier that notifies GoRouter on auth state changes.
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -64,8 +64,8 @@ Future<GoRouter> createAppRouter() async {
         builder: (context, state) => const ProfileScreen(),
       ),
       GoRoute(
-        path: '/get-full-games',
-        builder: (context, state) => const GetFullGamesScreen(),
+        path: GetAllGamesScreen.routeName,
+        builder: (context, state) => const GetAllGamesScreen(),
       ),
     ],
     redirect: (context, state) {
