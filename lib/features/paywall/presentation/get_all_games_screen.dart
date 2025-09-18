@@ -213,7 +213,7 @@ class _GetAllGamesScreenState extends State<GetAllGamesScreen> {
         Duration(days: _plan!.durationDays),
       ),
       subscriptionPlan: planId,
-      discountCode: discountCode ?? '',
+      discountCode: discountCode,
     );
   }
 

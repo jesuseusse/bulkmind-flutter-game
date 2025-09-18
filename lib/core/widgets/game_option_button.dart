@@ -20,7 +20,9 @@ class GameOptionButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.zero,
             side: BorderSide(
-              color: isPressed ? Colors.white.withAlpha(102) : Colors.white,
+              color: isPressed
+                  ? Colors.white.withAlpha(102)
+                  : Theme.of(context).colorScheme.onSurface,
               width: 2,
             ),
           ),
@@ -32,7 +34,9 @@ class GameOptionButton extends StatelessWidget {
           value.toString(),
           style: TextStyle(
             fontSize: 24,
-            color: isPressed ? Colors.white.withAlpha(102) : Colors.white,
+            color: isPressed
+                ? Colors.white.withAlpha(102)
+                : Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ),

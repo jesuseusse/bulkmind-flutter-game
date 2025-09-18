@@ -31,10 +31,10 @@ class GameContent extends StatelessWidget {
           children: [
             Text(
               '${localizations.level}: $level',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),

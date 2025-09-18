@@ -7,6 +7,8 @@ class FirestoreUserRepository implements UserRepository {
   FirestoreUserRepository({FirebaseFirestore? db})
     : _db = db ?? FirebaseFirestore.instance;
 
+  static final Map<String, domain.User> _cache = {};
+
   CollectionReference<Map<String, dynamic>> get _usersCol =>
       _db.collection('users');
 
@@ -76,28 +78,57 @@ class FirestoreUserRepository implements UserRepository {
   @override
   Future<void> create(domain.User user) async {
     await _usersCol.doc(user.uid).set(_toMap(user));
+    _cache[user.uid] = user;
   }
 
   @override
   Future<domain.User> getById(String uid) async {
-    final doc = await _usersCol.doc(uid).get();
-    if (!doc.exists) throw StateError('User $uid not found');
-    final data = doc.data()!;
-    return _fromDoc(doc.id, data);
+    final user = await getUser(uid, forceRefresh: !_cache.containsKey(uid));
+    if (user == null) {
+      throw StateError('User $uid not found');
+    }
+    return user;
   }
 
   @override
   Future<void> update(domain.User user) async {
     await _usersCol.doc(user.uid).update(_toMap(user));
+    _cache[user.uid] = user;
   }
 
   @override
   Stream<domain.User?> watchById(String uid) {
     return _usersCol.doc(uid).snapshots().map((snap) {
-      if (!snap.exists) return null;
+      if (!snap.exists) {
+        _cache.remove(uid);
+        return null;
+      }
       final data = snap.data()!;
-      return _fromDoc(snap.id, data);
+      final user = _fromDoc(snap.id, data);
+      _cache[uid] = user;
+      return user;
     });
+  }
+
+  @override
+  Future<domain.User?> getUser(
+    String uid, {
+    bool forceRefresh = false,
+  }) async {
+    if (!forceRefresh) {
+      final cached = _cache[uid];
+      if (cached != null) {
+        return cached;
+      }
+    }
+    final doc = await _usersCol.doc(uid).get();
+    if (!doc.exists) {
+      _cache.remove(uid);
+      return null;
+    }
+    final user = _fromDoc(doc.id, doc.data()!);
+    _cache[uid] = user;
+    return user;
   }
 
   @override
@@ -117,6 +148,7 @@ class FirestoreUserRepository implements UserRepository {
     }
     if (update.isEmpty) return; // nothing to do
     await _usersCol.doc(uid).set(update, SetOptions(merge: true));
+    await getUser(uid, forceRefresh: true);
   }
 
   @override
@@ -124,7 +156,7 @@ class FirestoreUserRepository implements UserRepository {
     String uid, {
     required String subscriptionMethod,
     required String subscriptionPlan,
-    required DateTime subscriptionExpiresAt,
+    DateTime? subscriptionExpiresAt,
     String? discountCode,
   }) async {
     final data = <String, dynamic>{
@@ -132,8 +164,13 @@ class FirestoreUserRepository implements UserRepository {
       'subscriptionPlan': subscriptionPlan,
       'discountCode': discountCode ?? '',
     };
-    data['subscriptionExpiresAt'] = Timestamp.fromDate(subscriptionExpiresAt);
+    if (subscriptionExpiresAt != null) {
+      data['subscriptionExpiresAt'] = Timestamp.fromDate(subscriptionExpiresAt);
+    } else {
+      data['subscriptionExpiresAt'] = FieldValue.delete();
+    }
 
     await _usersCol.doc(uid).set(data, SetOptions(merge: true));
+    await getUser(uid, forceRefresh: true);
   }
 }

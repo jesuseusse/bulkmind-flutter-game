@@ -88,7 +88,9 @@ class PatternsScreen extends StatelessWidget {
                                     : (patternsProvider.userPattern[row][col]
                                           ? Colors.green
                                           : Colors.grey.shade800),
-                                foregroundColor: Colors.white,
+                                foregroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4),
                                 ),

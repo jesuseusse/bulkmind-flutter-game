@@ -7,6 +7,13 @@ abstract class UserRepository {
   Future<void> update(User user);
   Stream<User?> watchById(String uid);
 
+  /// Returns the user document if it exists, optionally forcing a refresh
+  /// bypassing any cached value.
+  Future<User?> getUser(
+    String uid, {
+    bool forceRefresh = false,
+  });
+
   /// Partially updates subscription fields for a user.
   /// Only non-null parameters are updated.
   Future<void> updateSubscription(
@@ -20,7 +27,7 @@ abstract class UserRepository {
     String uid, {
     required String subscriptionMethod,
     required String subscriptionPlan,
-    required DateTime subscriptionExpiresAt,
+    DateTime? subscriptionExpiresAt,
     String? discountCode,
   });
 }

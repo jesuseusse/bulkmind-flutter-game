@@ -37,7 +37,7 @@ class LogicScreen extends StatelessWidget {
                     ? Icons.trending_down
                     : Icons.trending_up,
                 size: 48,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
               options: [
                 Row(

@@ -30,18 +30,24 @@ class HomeScreen extends StatelessWidget {
         title: Text(l10n.appName),
         actions: [
           IconButton(
-            icon: const Icon(Icons.person, color: Colors.white),
+            icon: Icon(
+              Icons.person,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             onPressed: () => context.go('/profile'),
           ),
         ],
       ),
       body: current == null
           ? buildContent(false)
-          : StreamBuilder<domain.User?>(
-              stream: repo.watchById(current.uid),
+          : FutureBuilder<domain.User?>(
+              future: repo.getUser(current.uid),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return buildContent(false);
                 }
                 final user = snapshot.data;
                 final hasFullAccess = user?.isSubscribed ?? false;

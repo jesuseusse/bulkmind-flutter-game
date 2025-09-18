@@ -70,7 +70,7 @@ class _ColorOptionButtonState extends State<ColorOptionButton> {
             onPressed: _isPressed ? null : _handleTap,
             style: ElevatedButton.styleFrom(
               backgroundColor: widget.color,
-              foregroundColor: Colors.white,
+              foregroundColor: Theme.of(context).colorScheme.onSurface,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
               minimumSize: const Size.fromHeight(80),
             ),

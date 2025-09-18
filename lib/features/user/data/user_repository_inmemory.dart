@@ -46,6 +46,14 @@ class UserRepositoryInMemory implements UserRepository {
   }
 
   @override
+  Future<domain.User?> getUser(
+    String uid, {
+    bool forceRefresh = false,
+  }) async {
+    return _store[uid];
+  }
+
+  @override
   Future<void> updateSubscription(
     String uid, {
     DateTime? subscriptionExpiresAt,
