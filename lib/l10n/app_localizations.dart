@@ -481,6 +481,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Purchase flow would start here (Stripe)'**
   String get purchaseFlowStub;
+
+  /// No description provided for @payNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay'**
+  String get payNow;
+
+  /// No description provided for @launchingGooglePlayPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Google Play billing flow...'**
+  String get launchingGooglePlayPurchase;
+
+  /// No description provided for @launchingAppStorePurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening App Store billing flow...'**
+  String get launchingAppStorePurchase;
+
+  /// No description provided for @purchaseNotAvailableOnPlatform.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases are not supported on this platform.'**
+  String get purchaseNotAvailableOnPlatform;
+
+  /// No description provided for @complimentaryAccessGranted.
+  ///
+  /// In en, this message translates to:
+  /// **'Complimentary access granted! Enjoy all games.'**
+  String get complimentaryAccessGranted;
+
+  /// No description provided for @mustBeLoggedInToPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'You need to be signed in to continue.'**
+  String get mustBeLoggedInToPurchase;
+
+  /// No description provided for @purchaseFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t start the purchase. Please try again.'**
+  String get purchaseFailed;
 }
 
 class _AppLocalizationsDelegate

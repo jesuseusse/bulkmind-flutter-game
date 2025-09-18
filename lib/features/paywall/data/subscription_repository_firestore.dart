@@ -1,11 +1,12 @@
 import 'package:bulkmind/features/paywall/domain/subscription_models.dart';
 import 'package:bulkmind/features/paywall/domain/subscription_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class FirestoreSubscriptionRepository implements SubscriptionRepository {
   final FirebaseFirestore _db;
   FirestoreSubscriptionRepository({FirebaseFirestore? db})
-      : _db = db ?? FirebaseFirestore.instance;
+    : _db = db ?? FirebaseFirestore.instance;
 
   CollectionReference<Map<String, dynamic>> get _productsCol =>
       _db.collection('products');
@@ -13,7 +14,9 @@ class FirestoreSubscriptionRepository implements SubscriptionRepository {
   CollectionReference<Map<String, dynamic>> get _discountCodesCol =>
       _db.collection('discountCodes');
 
-  static SubscriptionPlan _planFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+  static SubscriptionPlan _planFromDoc(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
     final d = doc.data()!;
     return SubscriptionPlan(
       id: doc.id,
@@ -24,20 +27,32 @@ class FirestoreSubscriptionRepository implements SubscriptionRepository {
     );
   }
 
-  static DiscountCode _discountFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+  static DiscountCode _discountFromDoc(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
     final d = doc.data()!;
     DateTime? expiresAt;
     final raw = d['expiresAt'];
     if (raw is Timestamp) expiresAt = raw.toDate();
     if (raw is String) expiresAt = DateTime.tryParse(raw);
-    final apps = (d['applicableProductIds'] as List?)?.whereType<String>().toList() ?? const <String>[];
+    final apps =
+        (d['applicableProductIds'] as List?)?.whereType<String>().toList() ??
+        const <String>[];
     return DiscountCode(
       code: (d['code'] as String? ?? doc.id).toString(),
-      percentOff: d['percentOff'] is num ? (d['percentOff'] as num).toInt() : null,
-      amountOffCents: d['amountOffCents'] is num ? (d['amountOffCents'] as num).toInt() : null,
+      percentOff: d['percentOff'] is num
+          ? (d['percentOff'] as num).toInt()
+          : null,
+      amountOffCents: d['amountOffCents'] is num
+          ? (d['amountOffCents'] as num).toInt()
+          : null,
       expiresAt: expiresAt,
-      maxRedemptions: d['maxRedemptions'] is num ? (d['maxRedemptions'] as num).toInt() : null,
-      redeemedCount: d['redeemedCount'] is num ? (d['redeemedCount'] as num).toInt() : 0,
+      maxRedemptions: d['maxRedemptions'] is num
+          ? (d['maxRedemptions'] as num).toInt()
+          : null,
+      redeemedCount: d['redeemedCount'] is num
+          ? (d['redeemedCount'] as num).toInt()
+          : 0,
       active: d['active'] == true,
       applicableProductIds: apps,
     );
@@ -62,12 +77,16 @@ class FirestoreSubscriptionRepository implements SubscriptionRepository {
   }
 
   @override
-  Future<PriceQuote> quote({required String planId, String? discountCode}) async {
+  Future<PriceQuote> quote({
+    required String planId,
+    String? discountCode,
+  }) async {
     final plan = await getPlan(planId);
     final currency = plan.currency;
     int discounted = plan.priceCents;
     String? usedCode;
 
+    // Check and apply discount if provided
     if (discountCode != null && discountCode.trim().isNotEmpty) {
       final dc = await getDiscountCode(discountCode);
       if (dc != null && _isDiscountValid(dc, forProductId: planId)) {
@@ -87,10 +106,21 @@ class FirestoreSubscriptionRepository implements SubscriptionRepository {
 
   bool _isDiscountValid(DiscountCode dc, {required String forProductId}) {
     if (!dc.active) return false;
-    if (dc.expiresAt != null && !dc.expiresAt!.isAfter(DateTime.now())) return false;
-    if (dc.maxRedemptions != null && dc.redeemedCount >= dc.maxRedemptions!) return false;
-    if (dc.applicableProductIds.isNotEmpty && !dc.applicableProductIds.contains(forProductId)) return false;
-    if ((dc.percentOff == null || dc.percentOff == 0) && (dc.amountOffCents == null || dc.amountOffCents == 0)) return false;
+    if (dc.expiresAt != null && !dc.expiresAt!.isAfter(DateTime.now())) {
+      debugPrint('Discount ${dc.code} expired at ${dc.expiresAt}');
+      return false;
+    }
+    if (dc.maxRedemptions != null && dc.redeemedCount >= dc.maxRedemptions!) {
+      return false;
+    }
+    if (dc.applicableProductIds.isNotEmpty &&
+        !dc.applicableProductIds.contains(forProductId)) {
+      return false;
+    }
+    if ((dc.percentOff == null || dc.percentOff == 0) &&
+        (dc.amountOffCents == null || dc.amountOffCents == 0)) {
+      return false;
+    }
     return true;
   }
 
@@ -103,5 +133,20 @@ class FirestoreSubscriptionRepository implements SubscriptionRepository {
     }
     if (result < 0) result = 0;
     return result;
+  }
+
+  @override
+  Future<void> incrementDiscountCodeRedemption(String code) async {
+    final id = code.trim().toUpperCase();
+    final docRef = _discountCodesCol.doc(id);
+    await _db.runTransaction((transaction) async {
+      final snapshot = await transaction.get(docRef);
+      if (!snapshot.exists) return;
+      final current = snapshot.data()?['redeemedCount'];
+      final currentCount = current is num ? current.toInt() : 0;
+      transaction.update(docRef, {
+        'redeemedCount': currentCount + 1,
+      });
+    });
   }
 }

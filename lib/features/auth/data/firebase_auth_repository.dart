@@ -42,7 +42,7 @@ class FirebaseAuthRepository implements AuthRepository {
         birthday: birthday,
       );
     } on firebase_auth.FirebaseAuthException catch (e) {
-      throw e;
+      rethrow;
     } catch (e) {
       throw Exception('An unknown error occurred during sign up.');
     }

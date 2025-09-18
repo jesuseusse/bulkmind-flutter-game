@@ -12,5 +12,7 @@ abstract class SubscriptionRepository {
     required String planId,
     String? discountCode,
   });
-}
 
+  /// Increments the redeemed count for the given discount code.
+  Future<void> incrementDiscountCodeRedemption(String code);
+}

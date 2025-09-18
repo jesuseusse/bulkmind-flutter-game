@@ -63,5 +63,12 @@
 	"invalidOrExpiredCode": "Invalid or expired code",
 	"couldNotApplyCode": "Could not apply code",
 	"purchaseAnnualSubscription": "Purchase annual subscription",
-	"purchaseFlowStub": "Purchase flow would start here (Stripe)"
+	"purchaseFlowStub": "Purchase flow would start here (Stripe)",
+	"payNow": "Pay",
+	"launchingGooglePlayPurchase": "Opening Google Play billing flow...",
+	"launchingAppStorePurchase": "Opening App Store billing flow...",
+	"purchaseNotAvailableOnPlatform": "Purchases are not supported on this platform.",
+	"complimentaryAccessGranted": "Complimentary access granted! Enjoy all games.",
+	"mustBeLoggedInToPurchase": "You need to be signed in to continue.",
+	"purchaseFailed": "We couldn't start the purchase. Please try again."
 }

@@ -208,4 +208,30 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get purchaseFlowStub => 'Aquí iniciaría el flujo de compra (Stripe)';
+
+  @override
+  String get payNow => 'Pagar';
+
+  @override
+  String get launchingGooglePlayPurchase =>
+      'Abriendo el flujo de pago de Google Play...';
+
+  @override
+  String get launchingAppStorePurchase =>
+      'Abriendo el flujo de pago de App Store...';
+
+  @override
+  String get purchaseNotAvailableOnPlatform =>
+      'Las compras no están disponibles en esta plataforma.';
+
+  @override
+  String get complimentaryAccessGranted =>
+      'Acceso gratuito activado. ¡Disfruta todos los juegos!';
+
+  @override
+  String get mustBeLoggedInToPurchase => 'Debes iniciar sesión para continuar.';
+
+  @override
+  String get purchaseFailed =>
+      'No pudimos iniciar la compra. Intenta nuevamente.';
 }

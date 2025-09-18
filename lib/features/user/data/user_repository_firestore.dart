@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirestoreUserRepository implements UserRepository {
   final FirebaseFirestore _db;
   FirestoreUserRepository({FirebaseFirestore? db})
-      : _db = db ?? FirebaseFirestore.instance;
+    : _db = db ?? FirebaseFirestore.instance;
 
   CollectionReference<Map<String, dynamic>> get _usersCol =>
       _db.collection('users');
@@ -29,8 +29,15 @@ class FirestoreUserRepository implements UserRepository {
       subscriptionExpiresAt = DateTime.tryParse(expiresRaw);
     }
 
-    final String? subscriptionMethod =
-        data['subscriptionMethod'] is String ? data['subscriptionMethod'] as String : null;
+    final String? subscriptionMethod = data['subscriptionMethod'] is String
+        ? data['subscriptionMethod'] as String
+        : null;
+    final String? subscriptionPlan = data['subscriptionPlan'] is String
+        ? data['subscriptionPlan'] as String
+        : null;
+    final String? discountCode = data['discountCode'] is String
+        ? data['discountCode'] as String
+        : null;
     return domain.User(
       uid: uid,
       email: data['email'] as String,
@@ -38,6 +45,8 @@ class FirestoreUserRepository implements UserRepository {
       birthday: birthday,
       subscriptionExpiresAt: subscriptionExpiresAt,
       subscriptionMethod: subscriptionMethod,
+      subscriptionPlan: subscriptionPlan,
+      discountCode: discountCode,
     );
   }
 
@@ -48,10 +57,18 @@ class FirestoreUserRepository implements UserRepository {
       'birthday': Timestamp.fromDate(user.birthday),
     };
     if (user.subscriptionExpiresAt != null) {
-      map['subscriptionExpiresAt'] = Timestamp.fromDate(user.subscriptionExpiresAt!);
+      map['subscriptionExpiresAt'] = Timestamp.fromDate(
+        user.subscriptionExpiresAt!,
+      );
     }
     if (user.subscriptionMethod != null) {
       map['subscriptionMethod'] = user.subscriptionMethod;
+    }
+    if (user.subscriptionPlan != null) {
+      map['subscriptionPlan'] = user.subscriptionPlan;
+    }
+    if (user.discountCode != null) {
+      map['discountCode'] = user.discountCode;
     }
     return map;
   }
@@ -91,13 +108,32 @@ class FirestoreUserRepository implements UserRepository {
   }) async {
     final update = <String, dynamic>{};
     if (subscriptionExpiresAt != null) {
-      update['subscriptionExpiresAt'] =
-          Timestamp.fromDate(subscriptionExpiresAt);
+      update['subscriptionExpiresAt'] = Timestamp.fromDate(
+        subscriptionExpiresAt,
+      );
     }
     if (subscriptionMethod != null) {
       update['subscriptionMethod'] = subscriptionMethod;
     }
     if (update.isEmpty) return; // nothing to do
     await _usersCol.doc(uid).set(update, SetOptions(merge: true));
+  }
+
+  @override
+  Future<void> updateSubscriptionDetails(
+    String uid, {
+    required String subscriptionMethod,
+    required String subscriptionPlan,
+    required DateTime subscriptionExpiresAt,
+    String? discountCode,
+  }) async {
+    final data = <String, dynamic>{
+      'subscriptionMethod': subscriptionMethod,
+      'subscriptionPlan': subscriptionPlan,
+      'discountCode': discountCode ?? '',
+    };
+    data['subscriptionExpiresAt'] = Timestamp.fromDate(subscriptionExpiresAt);
+
+    await _usersCol.doc(uid).set(data, SetOptions(merge: true));
   }
 }

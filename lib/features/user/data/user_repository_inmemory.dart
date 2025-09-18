@@ -60,6 +60,31 @@ class UserRepositoryInMemory implements UserRepository {
       subscriptionExpiresAt:
           subscriptionExpiresAt ?? current.subscriptionExpiresAt,
       subscriptionMethod: subscriptionMethod ?? current.subscriptionMethod,
+      subscriptionPlan: current.subscriptionPlan,
+      discountCode: current.discountCode,
+    );
+    _store[uid] = updated;
+    _controllerFor(uid).add(updated);
+  }
+
+  @override
+  Future<void> updateSubscriptionDetails(
+    String uid, {
+    required String subscriptionMethod,
+    required String subscriptionPlan,
+    DateTime? subscriptionExpiresAt,
+    String? discountCode,
+  }) async {
+    final current = await getById(uid);
+    final updated = domain.User(
+      uid: current.uid,
+      email: current.email,
+      fullName: current.fullName,
+      birthday: current.birthday,
+      subscriptionExpiresAt: subscriptionExpiresAt ?? current.subscriptionExpiresAt,
+      subscriptionMethod: subscriptionMethod,
+      subscriptionPlan: subscriptionPlan,
+      discountCode: discountCode ?? '',
     );
     _store[uid] = updated;
     _controllerFor(uid).add(updated);

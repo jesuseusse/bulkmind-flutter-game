@@ -14,4 +14,13 @@ abstract class UserRepository {
     DateTime? subscriptionExpiresAt,
     String? subscriptionMethod,
   });
+
+  /// Stores metadata about how the subscription was acquired on the user.
+  Future<void> updateSubscriptionDetails(
+    String uid, {
+    required String subscriptionMethod,
+    required String subscriptionPlan,
+    required DateTime subscriptionExpiresAt,
+    String? discountCode,
+  });
 }

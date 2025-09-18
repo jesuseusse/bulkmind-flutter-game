@@ -1,7 +1,6 @@
 import 'package:bulkmind/l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -32,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
         context.go('/');
       }
     } on FirebaseAuthException catch (e) {
-      if (context.mounted) {
+      if (mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(e.message ?? 'Unknown error.')));

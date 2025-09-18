@@ -63,5 +63,12 @@
 	"invalidOrExpiredCode": "Código inválido o expirado",
 	"couldNotApplyCode": "No se pudo aplicar el código",
 	"purchaseAnnualSubscription": "Comprar suscripción anual",
-	"purchaseFlowStub": "Aquí iniciaría el flujo de compra (Stripe)"
+	"purchaseFlowStub": "Aquí iniciaría el flujo de compra (Stripe)",
+	"payNow": "Pagar",
+	"launchingGooglePlayPurchase": "Abriendo el flujo de pago de Google Play...",
+	"launchingAppStorePurchase": "Abriendo el flujo de pago de App Store...",
+	"purchaseNotAvailableOnPlatform": "Las compras no están disponibles en esta plataforma.",
+	"complimentaryAccessGranted": "Acceso gratuito activado. ¡Disfruta todos los juegos!",
+	"mustBeLoggedInToPurchase": "Debes iniciar sesión para continuar.",
+	"purchaseFailed": "No pudimos iniciar la compra. Intenta nuevamente."
 }

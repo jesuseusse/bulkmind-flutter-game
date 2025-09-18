@@ -9,6 +9,8 @@ class User {
   final DateTime? subscriptionExpiresAt;
   // Optional subscription acquisition method (e.g., 'stripe', 'appstore', 'promotional')
   final String? subscriptionMethod;
+  final String? subscriptionPlan;
+  final String? discountCode;
 
   User({
     required this.uid,
@@ -17,6 +19,8 @@ class User {
     required this.birthday,
     this.subscriptionExpiresAt,
     this.subscriptionMethod,
+    this.subscriptionPlan,
+    this.discountCode,
   });
 
   // Convenience computed status: true if expiry is in the future
