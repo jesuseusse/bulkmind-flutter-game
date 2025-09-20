@@ -1,9 +1,10 @@
+import 'package:bulkmind/features/user/data/user_repository_firestore.dart';
+import 'package:bulkmind/l10n/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-import 'package:bulkmind/l10n/app_localizations.dart';
-import 'package:bulkmind/features/user/data/user_repository_firestore.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -89,6 +90,21 @@ class ProfileScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () => context.go('/'),
                   child: Text(l10n.goToHome),
+                ),
+                FutureBuilder<PackageInfo>(
+                  future: PackageInfo.fromPlatform(),
+                  builder: (context, snapshot) {
+                    final version = snapshot.data?.version;
+                    if (version == null) return const SizedBox.shrink();
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: Text(
+                        'v $version',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

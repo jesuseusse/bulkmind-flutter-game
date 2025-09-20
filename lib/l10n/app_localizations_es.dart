@@ -160,6 +160,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get continueWithOutSignIn => 'Continuar sin iniciar sesión';
 
   @override
+  String get privacyPolicyAgreementPrefix => 'Acepto la ';
+
+  @override
+  String get privacyPolicyLinkText => 'política de privacidad';
+
+  @override
+  String get privacyPolicyRequired =>
+      'Debes aceptar la política de privacidad para continuar.';
+
+  @override
   String get getAllGamesTitle => 'Obtener todos los juegos';
 
   @override

@@ -14,3 +14,13 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## Android build
+
+```bash
+flutter build appbundle
+```
+
+This uses the values defined in `local.properties` (e.g. `flutter.buildMode=profile`)
+to keep your Gradle build aligned with the configuration used by the Android
+module.

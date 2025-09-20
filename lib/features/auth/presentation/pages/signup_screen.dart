@@ -1,10 +1,12 @@
 import 'package:bulkmind/l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bulkmind/features/auth/domain/signup_usecase.dart';
 import 'package:bulkmind/features/auth/data/firebase_auth_repository.dart';
 import 'package:bulkmind/features/user/data/user_repository_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // A StatefulWidget to handle form state and user interaction.
 class SignUpPage extends StatefulWidget {
@@ -30,6 +32,12 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _passwordVisible = false;
   bool _confirmPasswordVisible = false;
   String? _passwordError;
+  bool _privacyPolicyAccepted = false;
+  bool _showPrivacyPolicyError = false;
+  final Uri _privacyPolicyUri = Uri.parse(
+    'https://jesuseusse.com/privacy-policy',
+  );
+  late final TapGestureRecognizer _privacyPolicyTapRecognizer;
 
   // Dependencies for the use case. In a real app, you would use a dependency injection
   // framework (like get_it) to provide these.
@@ -41,6 +49,8 @@ class _SignUpPageState extends State<SignUpPage> {
   void initState() {
     super.initState();
     _signUpUseCase = SignUpUseCase(_authRepository, _userRepository);
+    _privacyPolicyTapRecognizer = TapGestureRecognizer()
+      ..onTap = _openPrivacyPolicy;
   }
 
   String? _validatePassword(String password, AppLocalizations l10n) {
@@ -60,6 +70,16 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<void> _signUp() async {
     final localizations = AppLocalizations.of(context)!;
+
+    if (!_privacyPolicyAccepted) {
+      setState(() {
+        _showPrivacyPolicyError = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(localizations.privacyPolicyRequired)),
+      );
+      return;
+    }
 
     // Validate password strength first
     final pwdError = _validatePassword(
@@ -129,7 +149,12 @@ class _SignUpPageState extends State<SignUpPage> {
     _confirmPasswordController.dispose();
     _fullNameController.dispose();
     _birthdayController.dispose();
+    _privacyPolicyTapRecognizer.dispose();
     super.dispose();
+  }
+
+  Future<void> _openPrivacyPolicy() async {
+    await launchUrl(_privacyPolicyUri, mode: LaunchMode.externalApplication);
   }
 
   @override
@@ -251,6 +276,55 @@ class _SignUpPageState extends State<SignUpPage> {
                   autofillHints: const [AutofillHints.newPassword],
                 ),
                 const SizedBox(height: 24),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Checkbox(
+                      value: _privacyPolicyAccepted,
+                      onChanged: (value) {
+                        setState(() {
+                          _privacyPolicyAccepted = value ?? false;
+                          if (_privacyPolicyAccepted) {
+                            _showPrivacyPolicyError = false;
+                          }
+                        });
+                      },
+                    ),
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          children: [
+                            TextSpan(
+                              text: localizations.privacyPolicyAgreementPrefix,
+                            ),
+                            TextSpan(
+                              text: localizations.privacyPolicyLinkText,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer: _privacyPolicyTapRecognizer,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                if (_showPrivacyPolicyError && !_privacyPolicyAccepted)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      localizations.privacyPolicyRequired,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 16),
                 // Sign-up Button.
                 _isLoading
                     ? const CircularProgressIndicator()

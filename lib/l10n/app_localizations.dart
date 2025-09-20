@@ -398,6 +398,24 @@ abstract class AppLocalizations {
   /// **'Continue without signing in'**
   String get continueWithOutSignIn;
 
+  /// No description provided for @privacyPolicyAgreementPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'I accept the '**
+  String get privacyPolicyAgreementPrefix;
+
+  /// No description provided for @privacyPolicyLinkText.
+  ///
+  /// In en, this message translates to:
+  /// **'privacy policy'**
+  String get privacyPolicyLinkText;
+
+  /// No description provided for @privacyPolicyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'You must accept the privacy policy before signing up.'**
+  String get privacyPolicyRequired;
+
   /// No description provided for @getAllGamesTitle.
   ///
   /// In en, this message translates to:

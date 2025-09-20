@@ -1,4 +1,4 @@
-package com.jesuseusse.bulkmind.bulkmind
+package com.jesuseusse.bulkmind
 
 import io.flutter.embedding.android.FlutterActivity
 

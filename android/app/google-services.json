@@ -1,48 +1,48 @@
 {
-  "project_info": {
-    "project_number": "304126845917",
-    "project_id": "app-flutter-game",
-    "storage_bucket": "app-flutter-game.firebasestorage.app"
-  },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:304126845917:android:31bb501ea4bfc8e0440c34",
-        "android_client_info": {
-          "package_name": "com.jesuseusse.bulkmind.bulkmind"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAyAtjLDjrkQSlYYb5a09fTtFG0lFskHKQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:304126845917:android:9b0a0976c26b2fb9440c34",
-        "android_client_info": {
-          "package_name": "com.jesuseusse.mind_builder"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAyAtjLDjrkQSlYYb5a09fTtFG0lFskHKQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    }
-  ],
-  "configuration_version": "1"
+	"project_info": {
+		"project_number": "304126845917",
+		"project_id": "app-flutter-game",
+		"storage_bucket": "app-flutter-game.firebasestorage.app"
+	},
+	"client": [
+		{
+			"client_info": {
+				"mobilesdk_app_id": "1:304126845917:android:31bb501ea4bfc8e0440c34",
+				"android_client_info": {
+					"package_name": "com.jesuseusse.bulkmind"
+				}
+			},
+			"oauth_client": [],
+			"api_key": [
+				{
+					"current_key": "AIzaSyAyAtjLDjrkQSlYYb5a09fTtFG0lFskHKQ"
+				}
+			],
+			"services": {
+				"appinvite_service": {
+					"other_platform_oauth_client": []
+				}
+			}
+		},
+		{
+			"client_info": {
+				"mobilesdk_app_id": "1:304126845917:android:9b0a0976c26b2fb9440c34",
+				"android_client_info": {
+					"package_name": "com.jesuseusse.mind_builder"
+				}
+			},
+			"oauth_client": [],
+			"api_key": [
+				{
+					"current_key": "AIzaSyAyAtjLDjrkQSlYYb5a09fTtFG0lFskHKQ"
+				}
+			],
+			"services": {
+				"appinvite_service": {
+					"other_platform_oauth_client": []
+				}
+			}
+		}
+	],
+	"configuration_version": "1"
 }
