@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bulkmind/features/auth/domain/signup_usecase.dart';
 import 'package:bulkmind/features/auth/data/firebase_auth_repository.dart';
+import 'package:bulkmind/features/auth/presentation/pages/check_email_screen.dart';
 import 'package:bulkmind/features/user/data/user_repository_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -124,8 +125,8 @@ class _SignUpPageState extends State<SignUpPage> {
         birthday: _birthDate,
       );
       if (mounted) {
-        // Navigate to the home screen on success.
-        context.go('/');
+        // Navigate to the email verification screen on success.
+        context.go(CheckEmailScreen.routeName);
       }
     } on FirebaseAuthException catch (e) {
       if (mounted) {

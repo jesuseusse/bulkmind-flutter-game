@@ -73,5 +73,11 @@
 	"purchaseNotAvailableOnPlatform": "Las compras no están disponibles en esta plataforma.",
 	"complimentaryAccessGranted": "Acceso gratuito activado. ¡Disfruta todos los juegos!",
 	"mustBeLoggedInToPurchase": "Debes iniciar sesión para continuar.",
-	"purchaseFailed": "No pudimos iniciar la compra. Intenta nuevamente."
+	"purchaseFailed": "No pudimos iniciar la compra. Intenta nuevamente.",
+	"checkEmailTitle": "Revisa tu correo",
+	"checkEmailSubtitle": "Enviamos un enlace de verificación a {email}. Verifícalo para continuar.",
+	"resendVerificationEmail": "Reenviar correo de verificación",
+	"verificationEmailSent": "Correo de verificación enviado.",
+	"verificationEmailError": "No se pudo enviar el correo de verificación. Inténtalo más tarde.",
+	"checkEmailHelp": "Cuando tu correo esté verificado, esta pantalla se cerrará automáticamente."
 }

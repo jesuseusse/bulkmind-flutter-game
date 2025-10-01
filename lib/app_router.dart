@@ -4,6 +4,7 @@ import 'package:bulkmind/features/intuition/presentation/intuition_screen.dart';
 import 'package:bulkmind/features/logic/presentation/logic_screen.dart';
 import 'package:bulkmind/features/patterns/presentation/patterns_screen.dart';
 import 'package:bulkmind/features/spatial/presentation/spatial_screen.dart';
+import 'package:bulkmind/features/auth/presentation/pages/check_email_screen.dart';
 import 'features/home/presentation/home_screen.dart';
 import 'features/auth/presentation/pages/login_screen.dart';
 import 'features/onboarding/presentation/onboarding_screen.dart';
@@ -43,6 +44,10 @@ Future<GoRouter> createAppRouter() async {
         builder: (context, state) => const SignUpPage(),
       ),
       GoRoute(
+        path: CheckEmailScreen.routeName,
+        builder: (context, state) => const CheckEmailScreen(),
+      ),
+      GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),
       ),
@@ -69,26 +74,33 @@ Future<GoRouter> createAppRouter() async {
       ),
     ],
     redirect: (context, state) {
-      // List of routes that do not require authentication.
       final publicRoutes = ['/', '/login', '/onboarding', '/sign-up'];
-
-      // Check if the user is logged in.
-      final bool loggedIn = isLoggedIn();
-
-      // If the user is not logged in AND the route they are trying to access
-      // is not a public route, redirect them to the login screen.
       final path = state.uri.path;
-      if (!loggedIn && !publicRoutes.contains(path)) {
-        return '/login';
+      final bool loggedIn = isLoggedIn();
+      final bool emailVerified = auth.currentUser?.emailVerified ?? false;
+
+      if (!loggedIn) {
+        if (path == CheckEmailScreen.routeName) {
+          return '/login';
+        }
+        if (!publicRoutes.contains(path)) {
+          return '/login';
+        }
+        return null;
       }
 
-      // If the user is logged in and tries to go to a public route like login or onboarding,
-      // redirect them to the main screen.
-      if (loggedIn && publicRoutes.contains(path)) {
+      if (!emailVerified && path != CheckEmailScreen.routeName) {
+        return CheckEmailScreen.routeName;
+      }
+
+      if (emailVerified && path == CheckEmailScreen.routeName) {
         return '/';
       }
 
-      // If no redirection is needed, return null.
+      if (emailVerified && publicRoutes.contains(path) && path != '/') {
+        return '/';
+      }
+
       return null;
     },
   );

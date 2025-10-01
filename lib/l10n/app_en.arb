@@ -73,5 +73,11 @@
 	"purchaseNotAvailableOnPlatform": "Purchases are not supported on this platform.",
 	"complimentaryAccessGranted": "Complimentary access granted! Enjoy all games.",
 	"mustBeLoggedInToPurchase": "You need to be signed in to continue.",
-	"purchaseFailed": "We couldn't start the purchase. Please try again."
+	"purchaseFailed": "We couldn't start the purchase. Please try again.",
+	"checkEmailTitle": "Check your email",
+	"checkEmailSubtitle": "We sent a verification link to {email}. Please verify to continue.",
+	"resendVerificationEmail": "Resend verification email",
+	"verificationEmailSent": "Verification email sent.",
+	"verificationEmailError": "Couldn't send verification email. Try again later.",
+	"checkEmailHelp": "Once your email is verified, this screen will close automatically."
 }

@@ -244,4 +244,26 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get purchaseFailed =>
       'No pudimos iniciar la compra. Intenta nuevamente.';
+
+  @override
+  String get checkEmailTitle => 'Revisa tu correo';
+
+  @override
+  String checkEmailSubtitle(Object email) {
+    return 'Enviamos un enlace de verificación a $email. Verifícalo para continuar.';
+  }
+
+  @override
+  String get resendVerificationEmail => 'Reenviar correo de verificación';
+
+  @override
+  String get verificationEmailSent => 'Correo de verificación enviado.';
+
+  @override
+  String get verificationEmailError =>
+      'No se pudo enviar el correo de verificación. Inténtalo más tarde.';
+
+  @override
+  String get checkEmailHelp =>
+      'Cuando tu correo esté verificado, esta pantalla se cerrará automáticamente.';
 }

@@ -53,4 +53,23 @@ class FirebaseAuthRepository implements AuthRepository {
     // TODO: Implement Google sign-in logic here.
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> sendEmailVerification() async {
+    final user = _firebaseAuth.currentUser;
+    if (user == null) {
+      throw Exception('No authenticated user to send verification email.');
+    }
+    await user.sendEmailVerification();
+  }
+
+  @override
+  Future<bool> refreshEmailVerificationStatus() async {
+    final user = _firebaseAuth.currentUser;
+    if (user == null) {
+      throw Exception('No authenticated user to refresh.');
+    }
+    await user.reload();
+    return _firebaseAuth.currentUser?.emailVerified ?? false;
+  }
 }

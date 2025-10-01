@@ -244,4 +244,26 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get purchaseFailed =>
       'We couldn\'t start the purchase. Please try again.';
+
+  @override
+  String get checkEmailTitle => 'Check your email';
+
+  @override
+  String checkEmailSubtitle(Object email) {
+    return 'We sent a verification link to $email. Please verify to continue.';
+  }
+
+  @override
+  String get resendVerificationEmail => 'Resend verification email';
+
+  @override
+  String get verificationEmailSent => 'Verification email sent.';
+
+  @override
+  String get verificationEmailError =>
+      'Couldn\'t send verification email. Try again later.';
+
+  @override
+  String get checkEmailHelp =>
+      'Once your email is verified, this screen will close automatically.';
 }

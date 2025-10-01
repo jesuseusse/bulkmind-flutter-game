@@ -541,6 +541,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We couldn\'t start the purchase. Please try again.'**
   String get purchaseFailed;
+
+  /// No description provided for @checkEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email'**
+  String get checkEmailTitle;
+
+  /// No description provided for @checkEmailSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a verification link to {email}. Please verify to continue.'**
+  String checkEmailSubtitle(Object email);
+
+  /// No description provided for @resendVerificationEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend verification email'**
+  String get resendVerificationEmail;
+
+  /// No description provided for @verificationEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification email sent.'**
+  String get verificationEmailSent;
+
+  /// No description provided for @verificationEmailError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send verification email. Try again later.'**
+  String get verificationEmailError;
+
+  /// No description provided for @checkEmailHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Once your email is verified, this screen will close automatically.'**
+  String get checkEmailHelp;
 }
 
 class _AppLocalizationsDelegate

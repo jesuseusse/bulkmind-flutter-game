@@ -12,4 +12,10 @@ abstract class AuthRepository {
 
   // Method for Google sign-in.
   Future<void> signInWithGoogle();
+
+  /// Sends an email verification link to the currently signed in user.
+  Future<void> sendEmailVerification();
+
+  /// Reloads the auth user and returns the latest email verification flag.
+  Future<bool> refreshEmailVerificationStatus();
 }

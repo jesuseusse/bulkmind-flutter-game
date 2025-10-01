@@ -2,6 +2,7 @@ import 'package:bulkmind/l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:bulkmind/features/auth/presentation/pages/check_email_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,12 +24,18 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      await _auth.signInWithEmailAndPassword(
+      final credential = await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+      await credential.user?.reload();
+      final isVerified = _auth.currentUser?.emailVerified ?? false;
       if (mounted) {
-        context.go('/');
+        if (isVerified) {
+          context.go('/');
+        } else {
+          context.go(CheckEmailScreen.routeName);
+        }
       }
     } on FirebaseAuthException catch (e) {
       if (mounted) {
