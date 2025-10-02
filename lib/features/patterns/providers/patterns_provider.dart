@@ -18,6 +18,7 @@ class PatternsProvider extends ChangeNotifier {
 
   DateTime? startTime;
   double maxTime = 0;
+  bool _hasShownTimeoutDialog = false;
 
   // DB records
   final _db = GameDataBase();
@@ -30,6 +31,34 @@ class PatternsProvider extends ChangeNotifier {
   String get elapsedTotalTimeFormatted =>
       formatDuration(_computeTotalElapsed());
   bool get showCorrectIconFeedback => _showCorrectIconFeedback;
+  bool get hasShownTimeoutDialog => _hasShownTimeoutDialog;
+  Duration get elapsedLevelTime {
+    final start = startTime;
+    if (start == null) {
+      return Duration.zero;
+    }
+    return DateTime.now().difference(start);
+  }
+
+  double levelRemainingTimeFraction({Duration? elapsed}) {
+    if (startTime == null || maxTime <= 0) {
+      return 1;
+    }
+    final Duration effectiveElapsed = elapsed ?? elapsedLevelTime;
+    final double totalMilliseconds = maxTime * 1000;
+    if (totalMilliseconds <= 0) {
+      return 1;
+    }
+    return 1 - (effectiveElapsed.inMilliseconds / totalMilliseconds);
+  }
+
+  bool isInMemorizationPhase(Duration elapsed) {
+    if (startTime == null || maxTime <= 0) {
+      return false;
+    }
+    final double memorizationWindowMs = maxTime * 1000 * 0.5;
+    return elapsed.inMilliseconds < memorizationWindowMs;
+  }
 
   PatternsProvider() {
     _generatePuzzle();
@@ -52,6 +81,7 @@ class PatternsProvider extends ChangeNotifier {
     columns = levelCreated.gridSize[1];
     maxTime = levelCreated.maxTime;
     startTime = DateTime.now();
+    _hasShownTimeoutDialog = false;
     notifyListeners();
   }
 
@@ -72,10 +102,14 @@ class PatternsProvider extends ChangeNotifier {
     _stopTotalTimeTracking();
     _generatePuzzle();
     _startTotalTimeTracking();
+    _hasShownTimeoutDialog = false;
     notifyListeners();
   }
 
   void handleCellTap(int row, int col, BuildContext context) {
+    if (_hasShownTimeoutDialog) {
+      return;
+    }
     // Check if the tapped cell matches the initial pattern
     if (initialPattern[row][col]) {
       // Correct tap: update userPattern to reflect the selection
@@ -110,17 +144,23 @@ class PatternsProvider extends ChangeNotifier {
       bool isRecord = _inNewRecord(time);
       _stopTotalTimeTracking();
       if (context.mounted) {
+        _hasShownTimeoutDialog = true;
         _showGameOverDialog(context, isRecord, level, time);
       }
     }
   }
 
   void showGameOverDialog(BuildContext context) {
+    if (_hasShownTimeoutDialog) {
+      return;
+    }
     final int time = _computeTotalElapsed().inMilliseconds;
     final bool isRecord = _inNewRecord(time);
     _stopTotalTimeTracking();
-    if (!context.mounted) return;
-    _showGameOverDialog(context, isRecord, level, time, isTimeout: true);
+    if (context.mounted) {
+      _hasShownTimeoutDialog = true;
+      _showGameOverDialog(context, isRecord, level, time, isTimeout: true);
+    }
   }
 
   void _showGameOverDialog(

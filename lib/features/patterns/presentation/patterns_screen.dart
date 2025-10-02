@@ -19,22 +19,36 @@ class PatternsScreen extends StatelessWidget {
               const Duration(milliseconds: 100),
               (x) => x,
             ),
-            builder: (context, snapshot) {
+            builder: (context, _) {
               int totalRows = patternsProvider.rows;
               int totalColumns = patternsProvider.columns;
-              bool showPattern =
-                  patternsProvider.startTime != null &&
-                  DateTime.now()
-                          .difference(patternsProvider.startTime!)
-                          .inSeconds <
-                      patternsProvider.maxTime * 0.5;
+              if (patternsProvider.startTime == null) {
+                return const SizedBox.shrink();
+              }
 
-              double levelRemainingTime =
-                  1 -
-                  (DateTime.now()
-                          .difference(patternsProvider.startTime!)
-                          .inMilliseconds /
-                      (patternsProvider.maxTime * 1000));
+              Duration differenceTime = patternsProvider.elapsedLevelTime;
+              bool isTouchedAnyCell = patternsProvider.userPattern.any(
+                (row) => row.any((cell) => cell == true),
+              );
+              bool showPattern = patternsProvider.isInMemorizationPhase(
+                differenceTime,
+              );
+
+              // Remaining level time as a 0-1 fraction for progress indicator.
+              double levelRemainingTime = patternsProvider
+                  .levelRemainingTimeFraction(elapsed: differenceTime);
+              final double clampedLevelRemainingTime = levelRemainingTime
+                  .clamp(0.0, 1.0)
+                  .toDouble();
+
+              if (!patternsProvider.hasShownTimeoutDialog &&
+                  levelRemainingTime <= 0) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!patternsProvider.hasShownTimeoutDialog) {
+                    patternsProvider.showGameOverDialog(context);
+                  }
+                });
+              }
 
               return BaseScaffold(
                 title: AppLocalizations.of(context)!.patterns,
@@ -45,8 +59,7 @@ class PatternsScreen extends StatelessWidget {
                     children: [
                       Text(levelRemainingTime.toStringAsFixed(2)),
                       LinearProgressIndicator(
-                        value:
-                            levelRemainingTime, // progress decreases from 1 to 0
+                        value: clampedLevelRemainingTime, // 1→0 countdown
                         minHeight: 8,
                         backgroundColor: Colors.grey.shade800,
                         color: Colors.green,
@@ -71,7 +84,7 @@ class PatternsScreen extends StatelessWidget {
                             patternsProvider: patternsProvider,
                             row: row,
                             col: col,
-                            showPattern: showPattern,
+                            showPattern: !isTouchedAnyCell && showPattern,
                             isRightAnswer:
                                 patternsProvider.showCorrectIconFeedback,
                           ),
@@ -115,11 +128,11 @@ class _PatternCell extends StatelessWidget {
         padding: const EdgeInsets.all(4.0),
         child: ElevatedButton(
           onPressed: () {
-            if (showPattern) {
-              patternsProvider.startTime = DateTime.now().subtract(
-                Duration(seconds: (patternsProvider.maxTime * 0.5).toInt() + 1),
-              );
-            }
+            // if (showPattern) {
+            //   patternsProvider.startTime = DateTime.now().subtract(
+            //     Duration(seconds: (patternsProvider.maxTime * 0.5).toInt() + 1),
+            //   );
+            // }
             patternsProvider.handleCellTap(row, col, context);
           },
           style: ElevatedButton.styleFrom(
