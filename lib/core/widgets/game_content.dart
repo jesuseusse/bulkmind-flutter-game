@@ -3,16 +3,16 @@ import 'package:bulkmind/l10n/app_localizations.dart';
 
 class GameContent extends StatelessWidget {
   final int level;
-  final String time;
+  final String? time;
   final Widget? title;
   final Widget feedbackIcon;
   final Widget question;
-  final List<Widget> options;
+  final Widget options;
 
   const GameContent({
     super.key,
     required this.level,
-    required this.time,
+    this.time,
     this.title,
     required this.feedbackIcon,
     required this.question,
@@ -37,22 +37,24 @@ class GameContent extends StatelessWidget {
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              '${localizations.time}: $time',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white70,
+            if (time != null) ...[
+              Text(
+                '${localizations.time}: $time',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white70,
+                ),
               ),
-            ),
+            ] else
+              const SizedBox(height: 8),
             const SizedBox(height: 16),
             if (title != null) title!,
             feedbackIcon,
             const SizedBox(height: 120),
             question,
             const SizedBox(height: 32),
-            Column(children: options),
+            options,
           ],
         ),
       ),

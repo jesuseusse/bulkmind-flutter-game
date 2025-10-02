@@ -39,67 +39,69 @@ class LogicScreen extends StatelessWidget {
                 size: 48,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
-              options: [
-                Row(
-                  children: [
-                    GameOptionButton(
-                      value: logicProvider.puzzle['options'][0],
-                      isPressed: logicProvider.pressed.contains(
-                        logicProvider.puzzle['options'][0],
-                      ),
-                      onPressed: () {
-                        logicProvider.selectOption(
+              options: Column(
+                children: [
+                  Row(
+                    children: [
+                      GameOptionButton(
+                        value: logicProvider.puzzle['options'][0],
+                        isPressed: logicProvider.pressed.contains(
                           logicProvider.puzzle['options'][0],
-                          context,
-                        );
-                      },
-                    ),
-                    const SizedBox(width: 16),
-                    GameOptionButton(
-                      value: logicProvider.puzzle['options'][1],
-                      isPressed: logicProvider.pressed.contains(
-                        logicProvider.puzzle['options'][1],
+                        ),
+                        onPressed: () {
+                          logicProvider.selectOption(
+                            logicProvider.puzzle['options'][0],
+                            context,
+                          );
+                        },
                       ),
-                      onPressed: () {
-                        logicProvider.selectOption(
+                      const SizedBox(width: 16),
+                      GameOptionButton(
+                        value: logicProvider.puzzle['options'][1],
+                        isPressed: logicProvider.pressed.contains(
                           logicProvider.puzzle['options'][1],
-                          context,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    GameOptionButton(
-                      value: logicProvider.puzzle['options'][2],
-                      isPressed: logicProvider.pressed.contains(
-                        logicProvider.puzzle['options'][2],
+                        ),
+                        onPressed: () {
+                          logicProvider.selectOption(
+                            logicProvider.puzzle['options'][1],
+                            context,
+                          );
+                        },
                       ),
-                      onPressed: () {
-                        logicProvider.selectOption(
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      GameOptionButton(
+                        value: logicProvider.puzzle['options'][2],
+                        isPressed: logicProvider.pressed.contains(
                           logicProvider.puzzle['options'][2],
-                          context,
-                        );
-                      },
-                    ),
-                    const SizedBox(width: 16),
-                    GameOptionButton(
-                      value: logicProvider.puzzle['options'][3],
-                      isPressed: logicProvider.pressed.contains(
-                        logicProvider.puzzle['options'][3],
+                        ),
+                        onPressed: () {
+                          logicProvider.selectOption(
+                            logicProvider.puzzle['options'][2],
+                            context,
+                          );
+                        },
                       ),
-                      onPressed: () {
-                        logicProvider.selectOption(
+                      const SizedBox(width: 16),
+                      GameOptionButton(
+                        value: logicProvider.puzzle['options'][3],
+                        isPressed: logicProvider.pressed.contains(
                           logicProvider.puzzle['options'][3],
-                          context,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                        ),
+                        onPressed: () {
+                          logicProvider.selectOption(
+                            logicProvider.puzzle['options'][3],
+                            context,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           );
         },

@@ -23,23 +23,23 @@ class PatternsProvider extends ChangeNotifier {
   final _db = GameDataBase();
   Record currentRecord = const Record(maxLevel: 0, bestTime: 0);
 
-  // Total timers
-  final Stopwatch _stopwatchTotalTime = Stopwatch();
-  Timer? _timerTotalTime;
-  String _elapsedTotalTimeFormatted = '00:00.00';
+  // Total time tracking
+  DateTime? _totalTimeStart;
+  DateTime? _totalTimeEnd;
 
-  String get elapsedTotalTimeFormatted => _elapsedTotalTimeFormatted;
+  String get elapsedTotalTimeFormatted =>
+      formatDuration(_computeTotalElapsed());
   bool get showCorrectIconFeedback => _showCorrectIconFeedback;
 
   PatternsProvider() {
     _generatePuzzle();
-    _startTotalTimeTimer();
+    _startTotalTimeTracking();
     _loadCurrentRecord();
   }
 
   @override
   void dispose() {
-    _stopTotalTimeTimer();
+    _stopTotalTimeTracking();
     super.dispose();
   }
 
@@ -69,9 +69,9 @@ class PatternsProvider extends ChangeNotifier {
 
   void _reset() {
     level = 0;
-    _stopTotalTimeTimer();
-    _startTotalTimeTimer();
+    _stopTotalTimeTracking();
     _generatePuzzle();
+    _startTotalTimeTracking();
     notifyListeners();
   }
 
@@ -106,22 +106,30 @@ class PatternsProvider extends ChangeNotifier {
         notifyListeners();
       }
     } else {
-      _stopwatchTotalTime.stop();
-      int time = _stopwatchTotalTime.elapsedMilliseconds;
+      final int time = _computeTotalElapsed().inMilliseconds;
       bool isRecord = _inNewRecord(time);
-      _stopTotalTimeTimer();
+      _stopTotalTimeTracking();
       if (context.mounted) {
         _showGameOverDialog(context, isRecord, level, time);
       }
     }
   }
 
+  void showGameOverDialog(BuildContext context) {
+    final int time = _computeTotalElapsed().inMilliseconds;
+    final bool isRecord = _inNewRecord(time);
+    _stopTotalTimeTracking();
+    if (!context.mounted) return;
+    _showGameOverDialog(context, isRecord, level, time, isTimeout: true);
+  }
+
   void _showGameOverDialog(
     BuildContext context,
     bool isRecord,
     int level,
-    int time,
-  ) {
+    int time, {
+    bool isTimeout = false,
+  }) {
     final localizations = AppLocalizations.of(context)!;
     if (isRecord) _saveData(level, time);
     String recordMessage = '';
@@ -145,11 +153,15 @@ class PatternsProvider extends ChangeNotifier {
       }
     }
 
+    final dialogTitle = isTimeout
+        ? '⏰ ${localizations.timeTaken}'
+        : localizations.youAreALooser;
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) => AlertDialog(
-        title: Text(localizations.youAreALooser),
+        title: Text(dialogTitle),
         content: Text(recordMessage),
         actions: [
           TextButton(
@@ -171,22 +183,28 @@ class PatternsProvider extends ChangeNotifier {
     );
   }
 
-  void _startTotalTimeTimer() {
-    _stopwatchTotalTime.start();
-    _timerTotalTime?.cancel();
-    _timerTotalTime = Timer.periodic(const Duration(milliseconds: 100), (_) {
-      String newFormattedTime = formatDuration(_stopwatchTotalTime.elapsed);
-      if (_elapsedTotalTimeFormatted != newFormattedTime) {
-        _elapsedTotalTimeFormatted = newFormattedTime;
-        notifyListeners();
-      }
-    });
+  void _startTotalTimeTracking() {
+    _totalTimeStart = DateTime.now();
+    _totalTimeEnd = null;
+    notifyListeners();
   }
 
-  void _stopTotalTimeTimer() {
-    _stopwatchTotalTime.stop();
-    _stopwatchTotalTime.reset();
-    _timerTotalTime?.cancel();
+  void _stopTotalTimeTracking() {
+    if (_totalTimeStart == null) {
+      return;
+    }
+    if (_totalTimeEnd == null) {
+      _totalTimeEnd = DateTime.now();
+      notifyListeners();
+    }
+  }
+
+  Duration _computeTotalElapsed() {
+    if (_totalTimeStart == null) {
+      return Duration.zero;
+    }
+    final endReference = _totalTimeEnd ?? DateTime.now();
+    return endReference.difference(_totalTimeStart!);
   }
 
   bool _inNewRecord(int elapsedTime) {

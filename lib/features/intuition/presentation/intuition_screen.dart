@@ -59,63 +59,65 @@ class IntuitionScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              options: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: ColorOptionButton(
-                        key: ValueKey(
-                          '${game.displayedColor.toARGB32()}-${game.wordKey}-0',
+              options: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ColorOptionButton(
+                          key: ValueKey(
+                            '${game.displayedColor.toARGB32()}-${game.wordKey}-0',
+                          ),
+                          color: game.options[0],
+                          isCorrect: game.options[0] == game.displayedColor,
+                          onFinished: () =>
+                              gameProvider.handleAnswer(game.options[0], context),
                         ),
-                        color: game.options[0],
-                        isCorrect: game.options[0] == game.displayedColor,
-                        onFinished: () =>
-                            gameProvider.handleAnswer(game.options[0], context),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: ColorOptionButton(
-                        key: ValueKey(
-                          '${game.displayedColor.toARGB32()}-${game.wordKey}-1',
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ColorOptionButton(
+                          key: ValueKey(
+                            '${game.displayedColor.toARGB32()}-${game.wordKey}-1',
+                          ),
+                          color: game.options[1],
+                          isCorrect: game.options[1] == game.displayedColor,
+                          onFinished: () =>
+                              gameProvider.handleAnswer(game.options[1], context),
                         ),
-                        color: game.options[1],
-                        isCorrect: game.options[1] == game.displayedColor,
-                        onFinished: () =>
-                            gameProvider.handleAnswer(game.options[1], context),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ColorOptionButton(
-                        key: ValueKey(
-                          '${game.displayedColor.toARGB32()}-${game.wordKey}-2',
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ColorOptionButton(
+                          key: ValueKey(
+                            '${game.displayedColor.toARGB32()}-${game.wordKey}-2',
+                          ),
+                          color: game.options[2],
+                          isCorrect: game.options[2] == game.displayedColor,
+                          onFinished: () =>
+                              gameProvider.handleAnswer(game.options[2], context),
                         ),
-                        color: game.options[2],
-                        isCorrect: game.options[2] == game.displayedColor,
-                        onFinished: () =>
-                            gameProvider.handleAnswer(game.options[2], context),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: ColorOptionButton(
-                        key: ValueKey(
-                          '${game.displayedColor.toARGB32()}-${game.wordKey}-3',
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ColorOptionButton(
+                          key: ValueKey(
+                            '${game.displayedColor.toARGB32()}-${game.wordKey}-3',
+                          ),
+                          color: game.options[3],
+                          isCorrect: game.options[3] == game.displayedColor,
+                          onFinished: () =>
+                              gameProvider.handleAnswer(game.options[3], context),
                         ),
-                        color: game.options[3],
-                        isCorrect: game.options[3] == game.displayedColor,
-                        onFinished: () =>
-                            gameProvider.handleAnswer(game.options[3], context),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           );
         },

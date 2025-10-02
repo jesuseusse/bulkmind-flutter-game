@@ -20,8 +20,13 @@ List<List<bool>> generateMemoryPattern(int rows, int columns) {
 
   final totalCells =
       rows * columns; // Calculate the total number of cells in the grid
-  final maxActiveCells = (totalCells * 0.8)
+  final minActiveCells = _calculateMinActiveCells(rows, columns, totalCells);
+  final generatedMaxActiveCells = (totalCells * 0.8)
       .floor(); // Calculate 80% of the cells as the maximum active cells
+  final maxActiveCells = min(
+    totalCells,
+    max(generatedMaxActiveCells, minActiveCells),
+  );
 
   int activeCells = 0; // Counter of active cells generated so far
 
@@ -44,6 +49,26 @@ List<List<bool>> generateMemoryPattern(int rows, int columns) {
           activeCells++; // Increment the active cells counter
         }
       }
+    }
+  }
+
+  if (activeCells < minActiveCells) {
+    final List<Point<int>> inactiveCells = [];
+    for (int row = 0; row < rows; row++) {
+      for (int col = 0; col < columns; col++) {
+        if (!grid[row][col]) {
+          inactiveCells.add(Point(row, col));
+        }
+      }
+    }
+
+    inactiveCells.shuffle(random);
+    for (final cell in inactiveCells) {
+      if (activeCells >= minActiveCells) {
+        break;
+      }
+      grid[cell.x][cell.y] = true;
+      activeCells++;
     }
   }
 
@@ -115,4 +140,16 @@ bool _arePatternsEqual(List<List<bool>> a, List<List<bool>> b) {
     }
   }
   return true;
+}
+
+int _calculateMinActiveCells(int rows, int columns, int totalCells) {
+  if (rows == 4 && columns == 4) {
+    return 2;
+  }
+
+  if (totalCells > 16) {
+    return (totalCells * 0.2).ceil();
+  }
+
+  return max(1, (totalCells * 0.1).ceil());
 }

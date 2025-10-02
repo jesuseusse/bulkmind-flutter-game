@@ -13,11 +13,11 @@ Welcome to BulkMind. This briefing orients new contributors ("agents") around th
 - Additional Firebase services (analytics, remote config, etc.) should follow the same pattern: define a domain contract, implement it in `data`, register the adapter in composition root.
 
 ## Game Timer System
-- Cognitive games track active sessions with `Stopwatch` + `Timer.periodic` loops. Examples:
-  - Patterns: `lib/features/patterns/providers/patterns_provider.dart` keeps `_stopwatchTotalTime` in sync with UI-friendly text via `_timerTotalTime` ticks every 100 ms.
+- Cognitive games standardize time tracking so UX stays predictable:
+  - Patterns: `lib/features/patterns/providers/patterns_provider.dart` stores the start timestamp and computes elapsed time on demand when the session ends.
   - Intuition: `lib/features/intuition/presentation/providers/intuition_game_provider.dart` restarts timers whenever a round resets to ensure fresh limits.
   - Logic: `lib/features/logic/presentation/providers/logic_provider.dart` mirrors the same cadence, enabling consistent pacing across games.
-- Shared formatting lives in `lib/core/utils/time_utils.dart` so countdowns and scoreboards render uniformly. When introducing a new game, reuse the same stopwatch + formatter plumbing instead of ad-hoc timers.
+- Shared formatting lives in `lib/core/utils/time_utils.dart` so countdowns and scoreboards render uniformly. When introducing a new game, reuse the existing timing utilities instead of ad-hoc counters.
 
 ## Theme Consistency
 - The single source of truth for colors and typography is `lib/core/theme/app_theme.dart`, backed by palettes in `lib/core/theme/color_palette.dart`.
@@ -36,6 +36,7 @@ Welcome to BulkMind. This briefing orients new contributors ("agents") around th
 2. Implement adapters in the `data` layer (Firebase, local storage, etc.) and cover them with integration tests where possible.
 3. Compose presentation logic via providers and widgets that consume domain abstractions while leaning on the shared theme.
 4. Reuse the existing timer utilities for new games to keep UX expectations aligned.
-5. Before shipping, double-check theme coherence and run the relevant timers-driven flows end-to-end.
+5. Document each public function, widget, and class following *Effective Dart: Documentation* so the API surface stays clear for future agents.
+6. Before shipping, double-check theme coherence and run the relevant timers-driven flows end-to-end.
 
 Stay aligned with these guardrails and BulkMind will remain scalable, testable, and consistent.

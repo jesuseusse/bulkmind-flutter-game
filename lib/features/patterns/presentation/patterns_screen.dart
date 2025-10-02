@@ -28,22 +28,30 @@ class PatternsScreen extends StatelessWidget {
                           .difference(patternsProvider.startTime!)
                           .inSeconds <
                       patternsProvider.maxTime * 0.5;
+
+              double levelRemainingTime =
+                  1 -
+                  (DateTime.now()
+                          .difference(patternsProvider.startTime!)
+                          .inMilliseconds /
+                      (patternsProvider.maxTime * 1000));
+
               return BaseScaffold(
                 title: AppLocalizations.of(context)!.patterns,
                 body: GameContent(
                   level: patternsProvider.level,
-                  time: patternsProvider.elapsedTotalTimeFormatted,
-                  title: LinearProgressIndicator(
-                    value:
-                        1 -
-                        (DateTime.now()
-                                .difference(patternsProvider.startTime!)
-                                .inMilliseconds /
-                            (patternsProvider.maxTime *
-                                1000)), // progress decreases from 1 to 0
-                    minHeight: 8,
-                    backgroundColor: Colors.grey.shade800,
-                    color: Colors.green,
+                  // time: patternsProvider.elapsedTotalTimeFormatted,
+                  title: Column(
+                    children: [
+                      Text(levelRemainingTime.toStringAsFixed(2)),
+                      LinearProgressIndicator(
+                        value:
+                            levelRemainingTime, // progress decreases from 1 to 0
+                        minHeight: 8,
+                        backgroundColor: Colors.grey.shade800,
+                        color: Colors.green,
+                      ),
+                    ],
                   ),
                   feedbackIcon: patternsProvider.showCorrectIconFeedback
                       ? const Icon(
@@ -53,70 +61,19 @@ class PatternsScreen extends StatelessWidget {
                         )
                       : const SizedBox(height: 48),
                   question: const SizedBox(),
-                  options: List.generate(
-                    totalRows,
-                    (row) => Row(
-                      children: List.generate(
-                        totalColumns,
-                        (col) => Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                if (showPattern) {
-                                  patternsProvider.startTime = DateTime.now()
-                                      .subtract(
-                                        Duration(
-                                          seconds:
-                                              (patternsProvider.maxTime * 0.5)
-                                                  .toInt() +
-                                              1,
-                                        ),
-                                      );
-                                }
-                                patternsProvider.handleCellTap(
-                                  row,
-                                  col,
-                                  context,
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: showPattern
-                                    ? (patternsProvider.initialPattern[row][col]
-                                          ? Colors.green
-                                          : Colors.grey.shade800)
-                                    : (patternsProvider.userPattern[row][col]
-                                          ? Colors.green
-                                          : Colors.grey.shade800),
-                                foregroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                minimumSize: const Size.fromHeight(60),
-                              ),
-                              child: patternsProvider.userPattern[row][col]
-                                  ? LayoutBuilder(
-                                      builder: (context, constraints) {
-                                        final size = patternsProvider.level < 5
-                                            ? 48
-                                            : (constraints.maxWidth <
-                                                      constraints.maxHeight
-                                                  ? constraints.maxWidth * 0.6
-                                                  : constraints.maxHeight *
-                                                        0.6);
-                                        return Center(
-                                          child: Icon(
-                                            Icons.check_circle,
-                                            color: Colors.green,
-                                            size: size.toDouble(),
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  : const SizedBox.shrink(),
-                            ),
+                  options: Column(
+                    children: List.generate(
+                      totalRows,
+                      (row) => Row(
+                        children: List.generate(
+                          totalColumns,
+                          (col) => _PatternCell(
+                            patternsProvider: patternsProvider,
+                            row: row,
+                            col: col,
+                            showPattern: showPattern,
+                            isRightAnswer:
+                                patternsProvider.showCorrectIconFeedback,
                           ),
                         ),
                       ),
@@ -129,5 +86,90 @@ class PatternsScreen extends StatelessWidget {
         },
       ),
     );
+  }
+}
+
+class _PatternCell extends StatelessWidget {
+  const _PatternCell({
+    required this.patternsProvider,
+    required this.row,
+    required this.col,
+    required this.showPattern,
+    required this.isRightAnswer,
+  });
+
+  final PatternsProvider patternsProvider;
+  final int row;
+  final int col;
+  final bool showPattern;
+  final bool isRightAnswer;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isInitialPatternActive =
+        patternsProvider.initialPattern[row][col];
+    final bool isUserPatternActive = patternsProvider.userPattern[row][col];
+
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: ElevatedButton(
+          onPressed: () {
+            if (showPattern) {
+              patternsProvider.startTime = DateTime.now().subtract(
+                Duration(seconds: (patternsProvider.maxTime * 0.5).toInt() + 1),
+              );
+            }
+            patternsProvider.handleCellTap(row, col, context);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _backgroundColor(
+              isInitialPatternActive,
+              isUserPatternActive,
+            ),
+            foregroundColor: Theme.of(context).colorScheme.onSurface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+            ),
+            minimumSize: const Size.fromHeight(60),
+          ),
+          child: isUserPatternActive
+              ? LayoutBuilder(
+                  builder: (context, constraints) {
+                    final double size = patternsProvider.level < 5
+                        ? 48
+                        : (constraints.maxWidth < constraints.maxHeight
+                              ? constraints.maxWidth * 0.6
+                              : constraints.maxHeight * 0.6);
+                    return Center(
+                      child: Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                        size: size,
+                      ),
+                    );
+                  },
+                )
+              : const SizedBox.shrink(),
+        ),
+      ),
+    );
+  }
+
+  Color _backgroundColor(
+    bool isInitialPatternActive,
+    bool isUserPatternActive,
+  ) {
+    final Color inactiveColor = Colors.grey.shade800;
+
+    if (isRightAnswer) {
+      return inactiveColor;
+    }
+
+    if (showPattern) {
+      return isInitialPatternActive ? Colors.green : inactiveColor;
+    }
+
+    return isUserPatternActive ? Colors.green : inactiveColor;
   }
 }
