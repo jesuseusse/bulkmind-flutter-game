@@ -21,6 +21,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get restart => 'Reiniciar';
 
   @override
+  String get retry => 'Reintenar';
+
+  @override
   String get appName => 'Bulk Mind';
 
   @override

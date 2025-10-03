@@ -122,6 +122,12 @@ abstract class AppLocalizations {
   /// **'Restart'**
   String get restart;
 
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:

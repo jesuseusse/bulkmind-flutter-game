@@ -1,64 +1,36 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+
 import 'package:go_router/go_router.dart';
+
 import 'package:bulkmind/core/database/game_database.dart';
 import 'package:bulkmind/core/models/record.dart';
 import 'package:bulkmind/core/utils/time_utils.dart';
+import 'package:bulkmind/core/widgets/app_back_button.dart';
+import 'package:bulkmind/core/widgets/retry_button.dart';
 import 'package:bulkmind/features/patterns/domain/usescases/generate_puzzle.dart';
 import 'package:bulkmind/l10n/app_localizations.dart';
 
 class PatternsProvider extends ChangeNotifier {
-  // Level settings
-  int level = 0;
+  final GameDataBase _db = GameDataBase();
+
+  int _level = 0;
+  int _rows = 0;
+  int _columns = 0;
+  int _maxTimeMilliseconds = 0;
   bool _showCorrectIconFeedback = false;
-  int rows = 0;
-  int columns = 0;
-  late List<List<bool>> userPattern; // user pattern
-  late List<List<bool>> initialPattern = []; // pattern to memorize
-
-  DateTime? startTime;
-  double maxTime = 0;
   bool _hasShownTimeoutDialog = false;
+  bool _isDisposed = false;
 
-  // DB records
-  final _db = GameDataBase();
-  Record currentRecord = const Record(maxLevel: 0, bestTime: 0);
-
-  // Total time tracking
+  DateTime? _startTime;
   DateTime? _totalTimeStart;
   DateTime? _totalTimeEnd;
 
-  String get elapsedTotalTimeFormatted =>
-      formatDuration(_computeTotalElapsed());
-  bool get showCorrectIconFeedback => _showCorrectIconFeedback;
-  bool get hasShownTimeoutDialog => _hasShownTimeoutDialog;
-  Duration get elapsedLevelTime {
-    final start = startTime;
-    if (start == null) {
-      return Duration.zero;
-    }
-    return DateTime.now().difference(start);
-  }
+  List<List<bool>> _userPattern = <List<bool>>[];
+  List<List<bool>> _initialPattern = <List<bool>>[];
 
-  double levelRemainingTimeFraction({Duration? elapsed}) {
-    if (startTime == null || maxTime <= 0) {
-      return 1;
-    }
-    final Duration effectiveElapsed = elapsed ?? elapsedLevelTime;
-    final double totalMilliseconds = maxTime * 1000;
-    if (totalMilliseconds <= 0) {
-      return 1;
-    }
-    return 1 - (effectiveElapsed.inMilliseconds / totalMilliseconds);
-  }
-
-  bool isInMemorizationPhase(Duration elapsed) {
-    if (startTime == null || maxTime <= 0) {
-      return false;
-    }
-    final double memorizationWindowMs = maxTime * 1000 * 0.5;
-    return elapsed.inMilliseconds < memorizationWindowMs;
-  }
+  Record _currentRecord = const Record(maxLevel: 0, bestTime: 0);
 
   PatternsProvider() {
     _generatePuzzle();
@@ -66,86 +38,73 @@ class PatternsProvider extends ChangeNotifier {
     _loadCurrentRecord();
   }
 
-  @override
-  void dispose() {
-    _stopTotalTimeTracking();
-    super.dispose();
+  int get level => _level;
+  int get rows => _rows;
+  int get columns => _columns;
+  int get maxTimeMilliseconds => _maxTimeMilliseconds;
+  bool get showCorrectIconFeedback => _showCorrectIconFeedback;
+  bool get hasShownTimeoutDialog => _hasShownTimeoutDialog;
+  DateTime? get startTime => _startTime;
+  List<List<bool>> get userPattern => _userPattern;
+  List<List<bool>> get initialPattern => _initialPattern;
+  Record get currentRecord => _currentRecord;
+  Duration get elapsedLevelTime {
+    final DateTime? start = _startTime;
+    if (start == null) {
+      return Duration.zero;
+    }
+    return DateTime.now().difference(start);
   }
 
-  void _generatePuzzle() {
-    LevelData levelCreated = generateLevel(level, initialPattern);
-    initialPattern = levelCreated.pattern;
-
-    _initializeUserPattern(levelCreated.gridSize[0], levelCreated.gridSize[1]);
-    rows = levelCreated.gridSize[0];
-    columns = levelCreated.gridSize[1];
-    maxTime = levelCreated.maxTime;
-    startTime = DateTime.now();
-    _hasShownTimeoutDialog = false;
-    notifyListeners();
-  }
-
-  void _initializeUserPattern(rows, columns) {
-    userPattern = List.generate(
-      rows,
-      (_) => List.generate(columns, (_) => false),
-    );
-  }
-
-  void _levelComplete() {
-    level++;
-    _generatePuzzle();
-  }
-
-  void _reset() {
-    level = 0;
-    _stopTotalTimeTracking();
-    _generatePuzzle();
-    _startTotalTimeTracking();
-    _hasShownTimeoutDialog = false;
-    notifyListeners();
+  bool isInMemorizationPhase(Duration elapsed) {
+    if (_startTime == null || _maxTimeMilliseconds <= 0) {
+      return false;
+    }
+    final double memorizationWindowMs = _maxTimeMilliseconds * 0.5;
+    return elapsed.inMilliseconds < memorizationWindowMs;
   }
 
   void handleCellTap(int row, int col, BuildContext context) {
     if (_hasShownTimeoutDialog) {
       return;
     }
-    // Check if the tapped cell matches the initial pattern
-    if (initialPattern[row][col]) {
-      // Correct tap: update userPattern to reflect the selection
-      userPattern[row][col] = true;
 
-      // Check if userPattern now fully matches the initialPattern
+    if (_initialPattern[row][col]) {
+      _userPattern[row][col] = true;
+
       bool allMatch = true;
-      for (int r = 0; r < rows; r++) {
-        for (int c = 0; c < columns; c++) {
-          if (initialPattern[r][c] != userPattern[r][c]) {
+      for (int r = 0; r < _rows; r++) {
+        for (int c = 0; c < _columns; c++) {
+          if (_initialPattern[r][c] != _userPattern[r][c]) {
             allMatch = false;
             break;
           }
         }
-        if (!allMatch) break;
+        if (!allMatch) {
+          break;
+        }
       }
 
-      // If all cells match, show success feedback and go to next level
       if (allMatch) {
         _showCorrectIconFeedback = true;
-        notifyListeners();
+        _notifySafely();
         Future.delayed(const Duration(milliseconds: 500), () {
+          if (_isDisposed) return;
           _showCorrectIconFeedback = false;
-          notifyListeners();
+          _notifySafely();
           _levelComplete();
         });
       } else {
-        notifyListeners();
+        _notifySafely();
       }
     } else {
       final int time = _computeTotalElapsed().inMilliseconds;
-      bool isRecord = _inNewRecord(time);
+      final bool isRecord = _inNewRecord(time);
       _stopTotalTimeTracking();
       if (context.mounted) {
         _hasShownTimeoutDialog = true;
-        _showGameOverDialog(context, isRecord, level, time);
+        _notifySafely();
+        _showGameOverDialog(context, isRecord, _level, time);
       }
     }
   }
@@ -159,8 +118,46 @@ class PatternsProvider extends ChangeNotifier {
     _stopTotalTimeTracking();
     if (context.mounted) {
       _hasShownTimeoutDialog = true;
-      _showGameOverDialog(context, isRecord, level, time, isTimeout: true);
+      _notifySafely();
+      _showGameOverDialog(context, isRecord, _level, time, isTimeout: true);
     }
+  }
+
+  void _generatePuzzle() {
+    final List<List<bool>> previousPattern = _initialPattern;
+    final LevelData levelCreated = generateLevel(_level, previousPattern);
+    _initialPattern = levelCreated.pattern;
+
+    _initializeUserPattern(levelCreated.gridSize[0], levelCreated.gridSize[1]);
+    _rows = levelCreated.gridSize[0];
+    _columns = levelCreated.gridSize[1];
+    _maxTimeMilliseconds = levelCreated.maxTimeMilliseconds;
+    _startTime = DateTime.now();
+    _hasShownTimeoutDialog = false;
+    _notifySafely();
+  }
+
+  void _initializeUserPattern(int rows, int columns) {
+    _userPattern = List.generate(
+      rows,
+      (_) => List.generate(columns, (_) => false),
+    );
+  }
+
+  void _levelComplete() {
+    _level++;
+    if (_isDisposed) return;
+    _generatePuzzle();
+  }
+
+  void _reset() {
+    _level = 0;
+    _stopTotalTimeTracking();
+    if (_isDisposed) return;
+    _generatePuzzle();
+    _startTotalTimeTracking();
+    _hasShownTimeoutDialog = false;
+    _notifySafely();
   }
 
   void _showGameOverDialog(
@@ -171,7 +168,9 @@ class PatternsProvider extends ChangeNotifier {
     bool isTimeout = false,
   }) {
     final localizations = AppLocalizations.of(context)!;
-    if (isRecord) _saveData(level, time);
+    if (isRecord) {
+      _saveData(level, time);
+    }
     String recordMessage = '';
 
     recordMessage +=
@@ -186,14 +185,14 @@ class PatternsProvider extends ChangeNotifier {
           '⏱️ ${localizations.newBestTime}: ${formatDuration(Duration(milliseconds: time))}';
     } else {
       recordMessage +=
-          '${localizations.maxLevel}: ${currentRecord.maxLevel} ${localizations.levels}\n';
-      if (currentRecord.bestTime != double.infinity) {
+          '${localizations.maxLevel}: ${_currentRecord.maxLevel} ${localizations.levels}\n';
+      if (_currentRecord.bestTime > 0) {
         recordMessage +=
-            '⏱️ ${localizations.bestTime}: ${formatDuration(Duration(milliseconds: currentRecord.bestTime))}';
+            '⏱️ ${localizations.bestTime}: ${formatDuration(Duration(milliseconds: _currentRecord.bestTime))}';
       }
     }
 
-    final dialogTitle = isTimeout
+    final String dialogTitle = isTimeout
         ? '⏰ ${localizations.timeOut}'
         : localizations.youAreALooser;
 
@@ -203,20 +202,19 @@ class PatternsProvider extends ChangeNotifier {
       builder: (dialogContext) => AlertDialog(
         title: Text(dialogTitle),
         content: Text(recordMessage),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
         actions: [
-          TextButton(
+          AppBackButton(
             onPressed: () {
               Navigator.of(dialogContext).pop();
               GoRouter.of(context).go('/');
             },
-            child: Text(localizations.back),
           ),
-          TextButton(
+          RetryButton(
             onPressed: () {
               Navigator.of(dialogContext).pop();
               _reset();
             },
-            child: Text(localizations.restart),
           ),
         ],
       ),
@@ -226,7 +224,7 @@ class PatternsProvider extends ChangeNotifier {
   void _startTotalTimeTracking() {
     _totalTimeStart = DateTime.now();
     _totalTimeEnd = null;
-    notifyListeners();
+    _notifySafely();
   }
 
   void _stopTotalTimeTracking() {
@@ -235,7 +233,7 @@ class PatternsProvider extends ChangeNotifier {
     }
     if (_totalTimeEnd == null) {
       _totalTimeEnd = DateTime.now();
-      notifyListeners();
+      _notifySafely();
     }
   }
 
@@ -243,39 +241,53 @@ class PatternsProvider extends ChangeNotifier {
     if (_totalTimeStart == null) {
       return Duration.zero;
     }
-    final endReference = _totalTimeEnd ?? DateTime.now();
+    final DateTime endReference = _totalTimeEnd ?? DateTime.now();
     return endReference.difference(_totalTimeStart!);
   }
 
   bool _inNewRecord(int elapsedTime) {
-    if (level > currentRecord.maxLevel) {
+    if (_level > _currentRecord.maxLevel) {
       return true;
     }
-
-    if (level == currentRecord.maxLevel &&
-        elapsedTime < currentRecord.bestTime) {
+    if (_level == _currentRecord.maxLevel &&
+        (_currentRecord.bestTime == 0 ||
+            elapsedTime < _currentRecord.bestTime)) {
       return true;
     }
-
     return false;
   }
 
   Future<void> _saveData(int level, int time) async {
     await _db.saveGameData(featureKey: 'patterns', level: level, time: time);
-    currentRecord = Record(maxLevel: level, bestTime: time);
-    notifyListeners();
+    if (_isDisposed) {
+      return;
+    }
+    _currentRecord = Record(maxLevel: level, bestTime: time);
+    _notifySafely();
   }
 
   Future<void> _loadCurrentRecord() async {
     final data = await _db.loadGameData(featureKey: 'patterns');
-    final maxLevel = data['maxLevel'] as int;
-    final bestTime = data['bestTime'] as int;
+    if (_isDisposed) {
+      return;
+    }
+    final int maxLevel = data['maxLevel'] as int? ?? 0;
+    final int bestTime = data['bestTime'] as int? ?? 0;
+    _currentRecord = Record(maxLevel: maxLevel, bestTime: bestTime);
+    _notifySafely();
+  }
 
-    if (maxLevel > 0) {
-      currentRecord = Record(maxLevel: maxLevel, bestTime: bestTime);
-    } else {
-      currentRecord = const Record(maxLevel: 0, bestTime: 0);
+  void _notifySafely() {
+    if (_isDisposed) {
+      return;
     }
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _stopTotalTimeTracking();
+    super.dispose();
   }
 }

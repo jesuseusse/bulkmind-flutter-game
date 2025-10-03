@@ -3,12 +3,12 @@ import 'dart:math';
 class LevelData {
   final List<int> gridSize;
   final List<List<bool>> pattern;
-  final double maxTime;
+  final int maxTimeMilliseconds;
 
   LevelData({
     required this.gridSize,
     required this.pattern,
-    required this.maxTime,
+    required this.maxTimeMilliseconds,
   });
 }
 
@@ -99,20 +99,22 @@ List<int> generateGridSize(int level) {
   return [rows, columns];
 }
 
-double generateMaxTimeInSeconds(int level) {
+int generateMaxTimeInMilliseconds(int level) {
   // Keep 6 seconds until level 10
   if (level <= 10) {
-    return 6;
+    return 6000;
   }
 
   // After level 10, decrease linearly to reach 2 seconds at level 20
-  int extraLevel = level - 10;
-  double time = 6 - (extraLevel * 0.4);
+  final int extraLevel = level - 10;
+  double timeInSeconds = 6 - (extraLevel * 0.4);
 
   // Ensure the minimum time does not drop below 2 seconds
-  if (time < 2) time = 2;
+  if (timeInSeconds < 2) {
+    timeInSeconds = 2;
+  }
 
-  return time;
+  return (timeInSeconds * 1000).round();
 }
 
 LevelData generateLevel(int level, List<List<bool>> previousPattern) {
@@ -125,9 +127,13 @@ LevelData generateLevel(int level, List<List<bool>> previousPattern) {
     pattern = generateMemoryPattern(rows, columns);
   } while (_arePatternsEqual(pattern, previousPattern));
 
-  double maxTime = generateMaxTimeInSeconds(level);
+  final int maxTime = generateMaxTimeInMilliseconds(level);
 
-  return LevelData(gridSize: gridSize, pattern: pattern, maxTime: maxTime);
+  return LevelData(
+    gridSize: gridSize,
+    pattern: pattern,
+    maxTimeMilliseconds: maxTime,
+  );
 }
 
 /// Helper to compare two patterns for equality

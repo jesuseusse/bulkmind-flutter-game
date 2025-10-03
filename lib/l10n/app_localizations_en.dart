@@ -21,6 +21,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get restart => 'Restart';
 
   @override
+  String get retry => 'Retry';
+
+  @override
   String get appName => 'Bulk Mind';
 
   @override

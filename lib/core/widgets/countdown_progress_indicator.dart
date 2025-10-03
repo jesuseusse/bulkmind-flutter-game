@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 
 /// A countdown progress bar that depletes from full to empty over the
-/// provided [durationInSeconds].
+/// provided [duration].
 ///
 /// Optional [onCompleted] callback fires once when the countdown reaches
 /// zero.
 class CountdownProgressIndicator extends StatefulWidget {
   const CountdownProgressIndicator({
     super.key,
-    required this.durationInSeconds,
+    required this.duration,
     this.onCompleted,
     this.backgroundColor,
     this.color,
     this.minHeight,
-  }) : assert(
-         durationInSeconds > 0,
-         'durationInSeconds must be greater than zero',
-       );
+  });
 
   /// Total countdown duration in seconds.
-  final int durationInSeconds;
+  final Duration duration;
 
   /// Invoked once when the countdown reaches zero.
   final VoidCallback? onCompleted;
@@ -46,10 +43,8 @@ class _CountdownProgressIndicatorState extends State<CountdownProgressIndicator>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: widget.durationInSeconds),
-    )..addStatusListener(_handleStatusChange);
+    _controller = AnimationController(vsync: this, duration: widget.duration)
+      ..addStatusListener(_handleStatusChange);
 
     _controller.forward(from: 0);
   }
@@ -57,9 +52,9 @@ class _CountdownProgressIndicatorState extends State<CountdownProgressIndicator>
   @override
   void didUpdateWidget(CountdownProgressIndicator oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.durationInSeconds != widget.durationInSeconds) {
+    if (oldWidget.duration != widget.duration) {
       _controller
-        ..duration = Duration(seconds: widget.durationInSeconds)
+        ..duration = widget.duration
         ..reset()
         ..forward(from: 0);
       _didNotifyCompletion = false;

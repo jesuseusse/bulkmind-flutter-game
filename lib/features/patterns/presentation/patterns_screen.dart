@@ -35,33 +35,24 @@ class PatternsScreen extends StatelessWidget {
                 differenceTime,
               );
 
-              // Remaining level time as a 0-1 fraction for progress indicator.
-              double levelRemainingTime = patternsProvider
-                  .levelRemainingTimeFraction(elapsed: differenceTime);
-              final double clampedLevelRemainingTime = levelRemainingTime
-                  .clamp(0.0, 1.0)
-                  .toDouble();
-
-              if (!patternsProvider.hasShownTimeoutDialog &&
-                  levelRemainingTime <= 0) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (!patternsProvider.hasShownTimeoutDialog) {
-                    patternsProvider.showGameOverDialog(context);
-                  }
-                });
-              }
-
               return BaseScaffold(
                 title: AppLocalizations.of(context)!.patterns,
                 body: GameContent(
                   level: patternsProvider.level,
                   title: Column(
                     children: [
-                      LinearProgressIndicator(
-                        value: clampedLevelRemainingTime, // 1→0 countdown
-                        minHeight: 8,
-                        backgroundColor: Colors.grey.shade800,
-                        color: Colors.green,
+                      CountdownProgressIndicator(
+                        key: ValueKey(
+                          '${patternsProvider.level}_${patternsProvider.maxTimeMilliseconds}',
+                        ),
+                        duration: Duration(
+                          milliseconds: patternsProvider.maxTimeMilliseconds,
+                        ),
+                        onCompleted: () {
+                          if (!patternsProvider.hasShownTimeoutDialog) {
+                            patternsProvider.showGameOverDialog(context);
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -129,7 +120,7 @@ class _PatternCell extends StatelessWidget {
           onPressed: () {
             // if (showPattern) {
             //   patternsProvider.startTime = DateTime.now().subtract(
-            //     Duration(seconds: (patternsProvider.maxTime * 0.5).toInt() + 1),
+            //     Duration(milliseconds: (patternsProvider.maxTimeMilliseconds * 0.5).toInt() + 1000),
             //   );
             // }
             patternsProvider.handleCellTap(row, col, context);

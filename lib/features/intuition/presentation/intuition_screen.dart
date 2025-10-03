@@ -83,7 +83,7 @@ class _IntuitionScreenState extends State<IntuitionScreen> {
                           key: ValueKey(
                             '${gameProvider.levelNumber}_${game.wordKey}',
                           ),
-                          durationInSeconds: game.timeLimit?.inSeconds ?? 0,
+                          duration: game.timeLimit ?? Duration(seconds: 0),
                           onCompleted: () =>
                               gameProvider.showGameOverTimeOut(context),
                         ),

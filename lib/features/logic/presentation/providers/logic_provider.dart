@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'package:bulkmind/core/widgets/app_back_button.dart';
+import 'package:bulkmind/core/widgets/retry_button.dart';
 import 'package:flutter/material.dart';
 import 'package:bulkmind/features/logic/presentation/domain/usecases/generate_logic_puzzle.dart';
+import 'package:go_router/go_router.dart';
 
 class LogicProvider extends ChangeNotifier {
   int level = 0;
@@ -79,17 +82,22 @@ class LogicProvider extends ChangeNotifier {
     _stopTimer();
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('❌ Incorrecto'),
         content: Text('Volviste al nivel $level'),
         actions: [
-          TextButton(
+          AppBackButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              GoRouter.of(context).go('/');
+            },
+          ),
+          RetryButton(
             onPressed: () {
               Navigator.of(context).pop();
               _startTimer();
               notifyListeners();
             },
-            child: const Text('Reintentar'),
           ),
         ],
       ),

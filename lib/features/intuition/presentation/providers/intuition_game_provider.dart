@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:bulkmind/core/utils/time_utils.dart';
+import 'package:bulkmind/core/widgets/app_back_button.dart';
+import 'package:bulkmind/core/widgets/retry_button.dart';
 import 'package:bulkmind/features/intuition/domain/entities/color_game_data.dart';
 import 'package:bulkmind/features/onboarding/domain/usecases/generate_color_game.dart';
 import 'package:bulkmind/l10n/app_localizations.dart';
@@ -153,8 +155,15 @@ class IntuitionGameProvider extends ChangeNotifier {
       builder: (dialogContext) => AlertDialog(
         title: Text(dialogTitle),
         content: Text(recordMessage),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
         actions: [
-          TextButton(
+          AppBackButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              GoRouter.of(context).go('/');
+            },
+          ),
+          RetryButton(
             onPressed: () {
               Navigator.of(dialogContext).pop();
               _levelNumber = 0; // Reset level
@@ -162,14 +171,6 @@ class IntuitionGameProvider extends ChangeNotifier {
               _generateLevelGame(); // Generate new game
               notifyListeners(); // Ensure UI reflects reset level and new game
             },
-            child: Text(localizations.restart),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              GoRouter.of(context).go('/');
-            },
-            child: Text(localizations.back),
           ),
         ],
       ),
