@@ -1,3 +1,4 @@
+import 'package:bulkmind/core/widgets/countdown_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:bulkmind/core/widgets/base_scaffold.dart';
 import 'package:bulkmind/core/widgets/game_content.dart';
@@ -54,10 +55,8 @@ class PatternsScreen extends StatelessWidget {
                 title: AppLocalizations.of(context)!.patterns,
                 body: GameContent(
                   level: patternsProvider.level,
-                  // time: patternsProvider.elapsedTotalTimeFormatted,
                   title: Column(
                     children: [
-                      Text(levelRemainingTime.toStringAsFixed(2)),
                       LinearProgressIndicator(
                         value: clampedLevelRemainingTime, // 1→0 countdown
                         minHeight: 8,

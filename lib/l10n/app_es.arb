@@ -34,6 +34,7 @@
 	"levels": "Niveles",
 	"level": "Nivel",
 	"time": "Tiempo",
+	"timeOut": "Tiempo Agotado",
 	"incorrect": "Incorrecto",
 	"signUp": "Crear Cuenta",
 	"signIn": "Iniciar Sesión",

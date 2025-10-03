@@ -1,15 +1,32 @@
+import 'package:bulkmind/core/widgets/countdown_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:bulkmind/core/widgets/base_scaffold.dart';
 import 'package:bulkmind/core/widgets/game_content.dart';
 import 'package:bulkmind/features/intuition/presentation/providers/intuition_game_provider.dart';
 import 'package:bulkmind/features/intuition/presentation/widgets/answer_feedback_icon.dart';
 import 'package:bulkmind/features/intuition/presentation/widgets/color_option_button.dart';
+import 'package:bulkmind/features/intuition/domain/entities/color_game_data.dart';
 import 'package:bulkmind/l10n/app_localizations.dart';
 import 'package:bulkmind/core/utils/app_localizations_utils.dart';
 import 'package:provider/provider.dart';
 
-class IntuitionScreen extends StatelessWidget {
+class IntuitionScreen extends StatefulWidget {
   const IntuitionScreen({super.key});
+
+  @override
+  State<IntuitionScreen> createState() => _IntuitionScreenState();
+}
+
+class _IntuitionScreenState extends State<IntuitionScreen> {
+  bool _optionsLocked = false;
+  ColorGameData? _currentGame;
+
+  void _lockOptions() {
+    if (_optionsLocked) return;
+    setState(() {
+      _optionsLocked = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +34,18 @@ class IntuitionScreen extends StatelessWidget {
       create: (_) => IntuitionGameProvider(),
       child: Consumer<IntuitionGameProvider>(
         builder: (context, gameProvider, child) {
+          final game = gameProvider.game;
+
+          if (_currentGame != game && game != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!mounted) return;
+              setState(() {
+                _currentGame = game;
+                _optionsLocked = false;
+              });
+            });
+          }
+
           final localizations = AppLocalizations.of(context)!;
 
           final Widget feedbackIcon = AnswerFeedbackIcon(
@@ -31,7 +60,7 @@ class IntuitionScreen extends StatelessWidget {
             isCorrect: true, // It's for correct feedback
           );
 
-          if (gameProvider.isLoading || gameProvider.game == null) {
+          if (gameProvider.isLoading || game == null) {
             return const Scaffold(
               backgroundColor: Colors.black,
               body: Center(
@@ -40,15 +69,28 @@ class IntuitionScreen extends StatelessWidget {
             );
           }
 
-          final game = gameProvider.game!;
           final colorName = getColorName(game.wordKey, localizations);
 
           return BaseScaffold(
             title: localizations.intuition,
             body: GameContent(
               level: gameProvider.levelNumber,
-              time: gameProvider.elapsedTimeFormatted,
-              title: Text("🤔"),
+              title: Column(
+                children: [
+                  _optionsLocked
+                      ? const SizedBox(height: 8)
+                      : CountdownProgressIndicator(
+                          key: ValueKey(
+                            '${gameProvider.levelNumber}_${game.wordKey}',
+                          ),
+                          durationInSeconds: game.timeLimit?.inSeconds ?? 0,
+                          onCompleted: () =>
+                              gameProvider.showGameOverTimeOut(context),
+                        ),
+                  const SizedBox(height: 8),
+                  Text("🤔", style: TextStyle(fontSize: 24)),
+                ],
+              ),
               feedbackIcon: feedbackIcon,
               question: Text(
                 colorName,
@@ -70,8 +112,12 @@ class IntuitionScreen extends StatelessWidget {
                           ),
                           color: game.options[0],
                           isCorrect: game.options[0] == game.displayedColor,
-                          onFinished: () =>
-                              gameProvider.handleAnswer(game.options[0], context),
+                          onSelected: _lockOptions,
+                          onFinished: () => gameProvider.handleAnswer(
+                            game.options[0],
+                            context,
+                          ),
+                          isEnabled: !_optionsLocked,
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -82,8 +128,12 @@ class IntuitionScreen extends StatelessWidget {
                           ),
                           color: game.options[1],
                           isCorrect: game.options[1] == game.displayedColor,
-                          onFinished: () =>
-                              gameProvider.handleAnswer(game.options[1], context),
+                          onSelected: _lockOptions,
+                          onFinished: () => gameProvider.handleAnswer(
+                            game.options[1],
+                            context,
+                          ),
+                          isEnabled: !_optionsLocked,
                         ),
                       ),
                     ],
@@ -98,8 +148,12 @@ class IntuitionScreen extends StatelessWidget {
                           ),
                           color: game.options[2],
                           isCorrect: game.options[2] == game.displayedColor,
-                          onFinished: () =>
-                              gameProvider.handleAnswer(game.options[2], context),
+                          onSelected: _lockOptions,
+                          onFinished: () => gameProvider.handleAnswer(
+                            game.options[2],
+                            context,
+                          ),
+                          isEnabled: !_optionsLocked,
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -110,8 +164,12 @@ class IntuitionScreen extends StatelessWidget {
                           ),
                           color: game.options[3],
                           isCorrect: game.options[3] == game.displayedColor,
-                          onFinished: () =>
-                              gameProvider.handleAnswer(game.options[3], context),
+                          onSelected: _lockOptions,
+                          onFinished: () => gameProvider.handleAnswer(
+                            game.options[3],
+                            context,
+                          ),
+                          isEnabled: !_optionsLocked,
                         ),
                       ),
                     ],

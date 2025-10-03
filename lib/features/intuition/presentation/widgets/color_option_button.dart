@@ -4,12 +4,16 @@ class ColorOptionButton extends StatefulWidget {
   final Color color;
   final bool isCorrect;
   final VoidCallback onFinished;
+  final bool isEnabled;
+  final VoidCallback? onSelected;
 
   const ColorOptionButton({
     super.key,
     required this.color,
     required this.isCorrect,
     required this.onFinished,
+    this.isEnabled = true,
+    this.onSelected,
   });
 
   @override
@@ -25,7 +29,8 @@ class _ColorOptionButtonState extends State<ColorOptionButton> {
     super.didUpdateWidget(oldWidget);
     // Reset button state only if its core properties (color or correctness) change.
     if (oldWidget.color != widget.color ||
-        oldWidget.isCorrect != widget.isCorrect) {
+        oldWidget.isCorrect != widget.isCorrect ||
+        (oldWidget.isEnabled != widget.isEnabled && widget.isEnabled)) {
       _resetButtonState();
     }
   }
@@ -40,7 +45,8 @@ class _ColorOptionButtonState extends State<ColorOptionButton> {
   }
 
   void _handleTap() {
-    if (_isPressed) return;
+    if (_isPressed || !widget.isEnabled) return;
+    widget.onSelected?.call();
     if (widget.isCorrect) {
       setState(() {
         _isPressed = true;
@@ -67,7 +73,7 @@ class _ColorOptionButtonState extends State<ColorOptionButton> {
       child: Stack(
         children: [
           ElevatedButton(
-            onPressed: _isPressed ? null : _handleTap,
+            onPressed: _isPressed || !widget.isEnabled ? null : _handleTap,
             style: ElevatedButton.styleFrom(
               backgroundColor: widget.color,
               foregroundColor: Theme.of(context).colorScheme.onSurface,

@@ -111,6 +111,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get time => 'Time';
 
   @override
+  String get timeOut => 'Time Out';
+
+  @override
   String get incorrect => 'Incorrect';
 
   @override

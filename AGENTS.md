@@ -6,6 +6,13 @@ Welcome to BulkMind. This briefing orients new contributors ("agents") around th
 - **Layered features** live under `lib/features/<domain>/{data,domain,presentation}`. Data sources talk to infrastructure (Firebase, local DB), domain exposes models/use cases, presentation holds widgets and notifiers.
 - **Shared foundations** stay in `lib/core` for reusable models, services, theme, and utilities. Nothing in `core` depends on feature layers, keeping boundaries clean.
 - **State orchestration** relies on `ChangeNotifier`-based providers (e.g. `lib/features/patterns/providers/patterns_provider.dart`) or Riverpod-style wrappers, so UI reacts only to domain signals.
+- **Provider file structure** should follow a consistent order to keep state classes predictable:
+  1. Imports grouped by Flutter SDK, third-party packages, then project files.
+  2. Private properties for backing state (prefixed with `_`).
+  3. Constructor with any initialization logic that primes the state.
+  4. Public getters exposing read-only views of the state.
+  5. Business logic methods that mutate state and call `notifyListeners()` (or equivalent) with clear side effects.
+  6. Dispose method to release controllers, streams, or listeners.
 
 ## Firebase Foundation
 - Credentials and initialization flow through `lib/firebase_options.dart` and the generated `Firebase.initializeApp` wiring in `lib/main.dart`.

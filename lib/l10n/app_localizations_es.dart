@@ -111,6 +111,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get time => 'Tiempo';
 
   @override
+  String get timeOut => 'Tiempo Agotado';
+
+  @override
   String get incorrect => 'Incorrecto';
 
   @override

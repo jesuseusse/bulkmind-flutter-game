@@ -5,9 +5,10 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "bulkmind",
+			"name": "bulkmind (debug mode)",
 			"request": "launch",
-			"type": "dart"
+			"type": "dart",
+			"flutterMode": "debug"
 		},
 		{
 			"name": "bulkmind (profile mode)",

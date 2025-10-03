@@ -194,7 +194,7 @@ class PatternsProvider extends ChangeNotifier {
     }
 
     final dialogTitle = isTimeout
-        ? '⏰ ${localizations.timeTaken}'
+        ? '⏰ ${localizations.timeOut}'
         : localizations.youAreALooser;
 
     showDialog(

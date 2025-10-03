@@ -302,6 +302,12 @@ abstract class AppLocalizations {
   /// **'Time'**
   String get time;
 
+  /// No description provided for @timeOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Out'**
+  String get timeOut;
+
   /// No description provided for @incorrect.
   ///
   /// In en, this message translates to:
