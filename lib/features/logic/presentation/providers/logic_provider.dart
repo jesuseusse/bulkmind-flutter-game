@@ -1,90 +1,132 @@
 import 'dart:async';
-import 'package:bulkmind/core/widgets/app_back_button.dart';
-import 'package:bulkmind/core/widgets/retry_button.dart';
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
-import 'package:bulkmind/features/logic/presentation/domain/usecases/generate_logic_puzzle.dart';
+
 import 'package:go_router/go_router.dart';
 
+import 'package:bulkmind/core/widgets/app_back_button.dart';
+import 'package:bulkmind/core/widgets/retry_button.dart';
+import 'package:bulkmind/features/logic/presentation/domain/usecases/generate_logic_puzzle.dart';
+import 'package:bulkmind/l10n/app_localizations.dart';
+
 class LogicProvider extends ChangeNotifier {
-  int level = 0;
-  late Map<String, dynamic> puzzle;
-
-  Set<int> pressed = {};
-
-  final Stopwatch _stopwatch = Stopwatch();
-  Timer? _timer;
-  String _elapsedTimeFormatted = '00:00.00';
-  bool _showCorrectIconFeedback = false;
-
-  String get elapsedTimeFormatted => _elapsedTimeFormatted;
-  bool get showCorrectIconFeedback => _showCorrectIconFeedback;
-
   LogicProvider() {
     _generatePuzzle();
   }
 
+  int _level = 0;
+  String _comparisonSymbol = '<';
+  List<int> _options = const <int>[];
+  List<int> _solution = const <int>[];
+  final Set<int> _pressedOptions = <int>{};
+
+  DateTime? _startTime;
+  String _elapsedTimeFormatted = '00:00.00';
+  bool _showCorrectIconFeedback = false;
+  bool _isDisposed = false;
+  bool _hasActiveDialog = false;
+  Duration _timeLimit = const Duration(seconds: 4);
+  int _timerSeed = 0;
+
+  int get level => _level;
+  String get comparisonSymbol => _comparisonSymbol;
+  UnmodifiableListView<int> get options => UnmodifiableListView(_options);
+  bool get showCorrectIconFeedback => _showCorrectIconFeedback;
+  String get elapsedTimeFormatted => _elapsedTimeFormatted;
+  Duration get timeLimit => _timeLimit;
+  int get timerSeed => _timerSeed;
+
+  bool isOptionPressed(int value) => _pressedOptions.contains(value);
+
+  void selectOption(int value, BuildContext context) {
+    if (_isDisposed || _options.isEmpty) {
+      return;
+    }
+
+    _updateElapsedTime();
+    _pressedOptions.add(value);
+    final int selectedIndex = _pressedOptions.length - 1;
+
+    if (value != _solution[selectedIndex]) {
+      _handleIncorrectSelection(context);
+      return;
+    }
+
+    if (_pressedOptions.length == _solution.length) {
+      _handleCorrectSelection();
+      return;
+    }
+
+    _notifySafely();
+  }
+
+  void resetGame() {
+    _level = 0;
+    _generatePuzzle();
+  }
+
+  void reset() => resetGame();
+
   @override
   void dispose() {
-    _timer?.cancel();
-    _stopwatch.stop();
+    _isDisposed = true;
     super.dispose();
   }
 
   void _generatePuzzle() {
-    puzzle = generateLogicPuzzle();
-    _stopTimer();
-    _startTimer();
-    notifyListeners();
-  }
-
-  void _levelComplete() {
-    level++;
-    _generatePuzzle();
-  }
-
-  void reset() {
-    level = 0;
-    _generatePuzzle();
-  }
-
-  void selectOption(int value, BuildContext context) {
-    pressed.add(value);
-
-    final solution = puzzle['solution'] as List<int>;
-    final selectedIndex = pressed.length - 1;
-
-    if (value != solution[selectedIndex]) {
-      // Incorrecto: resetear nivel
-      level = 0;
-      pressed.clear();
-      _generatePuzzle();
-      notifyListeners();
-      _showErrorDialog(context);
+    if (_isDisposed) {
       return;
     }
+    final Map<String, dynamic> rawPuzzle = generateLogicPuzzle();
+    _comparisonSymbol = rawPuzzle['question'] as String? ?? '<';
+    _options = List<int>.from(rawPuzzle['options'] as List<int>);
+    _solution = List<int>.from(rawPuzzle['solution'] as List<int>);
+    _pressedOptions.clear();
+    _timeLimit = _calculateTimeLimitForLevel(_level);
+    _startTime = DateTime.now();
+    _elapsedTimeFormatted = _formatDuration(Duration.zero);
+    _hasActiveDialog = false;
+    _timerSeed += 1;
+    _notifySafely();
+  }
 
-    if (pressed.length == solution.length) {
-      // Correcto: subir nivel
-      _showCorrectIconFeedback = true;
-      notifyListeners();
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _showCorrectIconFeedback = false;
-        notifyListeners();
-      });
-      _levelComplete();
-      pressed.clear();
+  void _handleCorrectSelection() {
+    if (_isDisposed) {
+      return;
     }
+    _updateElapsedTime();
+    _showCorrectIconFeedback = true;
+    _notifySafely();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (_isDisposed) return;
+      _showCorrectIconFeedback = false;
+      _notifySafely();
+    });
+    _level++;
+    _generatePuzzle();
+  }
 
-    notifyListeners();
+  void _handleIncorrectSelection(BuildContext context) {
+    _updateElapsedTime();
+    _level = 0;
+    _generatePuzzle();
+    _showErrorDialog(context);
   }
 
   void _showErrorDialog(BuildContext context) {
-    _stopTimer();
-    showDialog(
+    if (_hasActiveDialog) {
+      return;
+    }
+    _hasActiveDialog = true;
+    final localizations = AppLocalizations.of(context)!;
+    showDialog<void>(
       context: context,
+      barrierDismissible: false,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('❌ Incorrecto'),
-        content: Text('Volviste al nivel $level'),
+        title: Text('❌ ${localizations.incorrect}'),
+        content: Text('${localizations.level}: $_level'),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
         actions: [
           AppBackButton(
             onPressed: () {
@@ -94,9 +136,12 @@ class LogicProvider extends ChangeNotifier {
           ),
           RetryButton(
             onPressed: () {
-              Navigator.of(context).pop();
-              _startTimer();
-              notifyListeners();
+              Navigator.of(dialogContext).pop();
+              if (_isDisposed) return;
+              _startTime = DateTime.now();
+              _elapsedTimeFormatted = _formatDuration(Duration.zero);
+              _hasActiveDialog = false;
+              _notifySafely();
             },
           ),
         ],
@@ -104,32 +149,93 @@ class LogicProvider extends ChangeNotifier {
     );
   }
 
-  void _startTimer() {
-    _stopwatch.reset();
-    _stopwatch.start();
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
-      String newFormattedTime = _formatDuration(_stopwatch.elapsed);
-      if (_elapsedTimeFormatted != newFormattedTime) {
-        _elapsedTimeFormatted = newFormattedTime;
-        notifyListeners();
-      }
-    });
+  void _updateElapsedTime() {
+    final DateTime? start = _startTime;
+    if (start == null) {
+      _elapsedTimeFormatted = _formatDuration(Duration.zero);
+      return;
+    }
+    final Duration elapsed = DateTime.now().difference(start);
+    _elapsedTimeFormatted = _formatDuration(elapsed);
   }
 
-  void _stopTimer() {
-    _stopwatch.stop();
-    _timer?.cancel();
+  void _notifySafely() {
+    if (_isDisposed) {
+      return;
+    }
+    notifyListeners();
   }
 
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    String minutes = twoDigits(duration.inMinutes.remainder(60));
-    String seconds = twoDigits(duration.inSeconds.remainder(60));
-    String milliseconds = (duration.inMilliseconds.remainder(1000) / 10)
+  static String _formatDuration(Duration duration) {
+    String twoDigits(int value) => value.toString().padLeft(2, '0');
+    final String minutes = twoDigits(duration.inMinutes.remainder(60));
+    final String seconds = twoDigits(duration.inSeconds.remainder(60));
+    final String centiseconds = (duration.inMilliseconds.remainder(1000) / 10)
         .truncate()
         .toString()
         .padLeft(2, '0');
-    return "$minutes:$seconds.$milliseconds";
+    return '$minutes:$seconds.$centiseconds';
+  }
+
+  void handleTimeout(BuildContext context) {
+    if (_isDisposed || _hasActiveDialog) {
+      return;
+    }
+
+    _updateElapsedTime();
+    final int failedLevel = _level;
+    _level = 0;
+    _pressedOptions.clear();
+    _hasActiveDialog = true;
+
+    final localizations = AppLocalizations.of(context)!;
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('⏰ ${localizations.timeOut}'),
+        content: Text('${localizations.level}: $failedLevel'),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        actions: [
+          AppBackButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              GoRouter.of(context).go('/');
+            },
+          ),
+          RetryButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              if (_isDisposed) {
+                return;
+              }
+              _generatePuzzle();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Duration _calculateTimeLimitForLevel(int level) {
+    if (level > 24) {
+      return const Duration(milliseconds: 1500);
+    }
+    if (level > 17) {
+      return const Duration(milliseconds: 1800);
+    }
+    if (level > 12) {
+      return const Duration(milliseconds: 2000);
+    }
+    if (level > 7) {
+      return const Duration(milliseconds: 2200);
+    }
+    if (level >= 6) {
+      return const Duration(seconds: 2);
+    }
+    if (level >= 3) {
+      return const Duration(seconds: 3);
+    }
+    return const Duration(seconds: 4);
   }
 }
