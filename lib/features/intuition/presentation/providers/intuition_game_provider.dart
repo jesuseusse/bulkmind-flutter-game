@@ -56,20 +56,25 @@ class IntuitionGameProvider extends ChangeNotifier {
         notifyListeners(); // Notify UI to hide icon
       });
     } else {
+      // calculate time taken for the current run
+      final timeTaken = DateTime.now().difference(_startTimeGame);
+      final double timeTakenMs = timeTaken.inMilliseconds.toDouble();
+
       bool isNewLevelRecord = _levelNumber > _maxLevel;
       bool isNewTimeRecord = false;
 
       if (isNewLevelRecord) {
         _maxLevel = _levelNumber;
+        _bestTime = timeTakenMs;
         isNewTimeRecord = true;
-      } else if (_levelNumber == _maxLevel) {}
+      } else if (_levelNumber == _maxLevel && timeTakenMs < _bestTime) {
+        _bestTime = timeTakenMs;
+        isNewTimeRecord = true;
+      }
 
       if (isNewLevelRecord || isNewTimeRecord) {
         _saveGameData(_maxLevel, _bestTime);
       }
-
-      // calculate time taken
-      final timeTaken = DateTime.now().difference(_startTimeGame);
 
       // wrong answer then show dialog
       _showGameOverDialog(
@@ -85,20 +90,25 @@ class IntuitionGameProvider extends ChangeNotifier {
   }
 
   void showGameOverTimeOut(BuildContext context) {
+    // calculate time taken
+    final timeTaken = DateTime.now().difference(_startTimeGame);
+    final double timeTakenMs = timeTaken.inMilliseconds.toDouble();
+
     bool isNewLevelRecord = _levelNumber > _maxLevel;
     bool isNewTimeRecord = false;
 
     if (isNewLevelRecord) {
       _maxLevel = _levelNumber;
+      _bestTime = timeTakenMs;
       isNewTimeRecord = true;
-    } else if (_levelNumber == _maxLevel) {}
+    } else if (_levelNumber == _maxLevel && timeTakenMs < _bestTime) {
+      _bestTime = timeTakenMs;
+      isNewTimeRecord = true;
+    }
 
     if (isNewLevelRecord || isNewTimeRecord) {
       _saveGameData(_maxLevel, _bestTime);
     }
-
-    // calculate time taken
-    final timeTaken = DateTime.now().difference(_startTimeGame);
 
     // timeout then show dialog
     _showGameOverDialog(
@@ -131,17 +141,24 @@ class IntuitionGameProvider extends ChangeNotifier {
     recordMessage +=
         '${localizations.timeTaken}: ${formatDuration(currentTimeTaken)}\n\n';
 
-    if (isNewLevelRecord) {
+    final bool hasNewRecord = isNewLevelRecord || isNewTimeRecord;
+    final Duration? bestTimeDuration = globalBestTime.isFinite
+        ? Duration(milliseconds: globalBestTime.round())
+        : null;
+
+    if (hasNewRecord) {
       recordMessage +=
-          '🎉 ${localizations.newRecord}: $globalMaxLevel ${localizations.levels}\n';
-      recordMessage +=
-          '⏱️ ${localizations.newBestTime}: ${formatDuration(Duration(milliseconds: globalBestTime.toInt()))}';
+          '🎉 ${localizations.newRecord}: $currentLevelReached ${localizations.levels}\n';
+      if (bestTimeDuration != null) {
+        recordMessage +=
+            '⏱️ ${localizations.newBestTime}: ${formatDuration(bestTimeDuration)}';
+      }
     } else {
       recordMessage +=
           '${localizations.maxLevel}: $globalMaxLevel ${localizations.levels}\n';
-      if (globalBestTime != double.infinity) {
+      if (bestTimeDuration != null) {
         recordMessage +=
-            '⏱️ ${localizations.bestTime}: ${formatDuration(Duration(milliseconds: globalBestTime.toInt()))}';
+            '⏱️ ${localizations.bestTime}: ${formatDuration(bestTimeDuration)}';
       }
     }
 
