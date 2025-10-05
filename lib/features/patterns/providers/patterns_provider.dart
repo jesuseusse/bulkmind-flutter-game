@@ -45,6 +45,7 @@ class PatternsProvider extends ChangeNotifier {
   bool get showCorrectIconFeedback => _showCorrectIconFeedback;
   bool get hasShownTimeoutDialog => _hasShownTimeoutDialog;
   DateTime? get startTime => _startTime;
+  DateTime? get totalTimeEnd => _totalTimeEnd;
   List<List<bool>> get userPattern => _userPattern;
   List<List<bool>> get initialPattern => _initialPattern;
   Record get currentRecord => _currentRecord;

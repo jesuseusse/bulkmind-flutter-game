@@ -31,10 +31,9 @@ class PatternsScreen extends StatelessWidget {
               bool isTouchedAnyCell = patternsProvider.userPattern.any(
                 (row) => row.any((cell) => cell == true),
               );
-              bool showPattern = patternsProvider.isInMemorizationPhase(
-                differenceTime,
-              );
-
+              bool showPattern =
+                  patternsProvider.totalTimeEnd != null ||
+                  patternsProvider.isInMemorizationPhase(differenceTime);
               return BaseScaffold(
                 title: AppLocalizations.of(context)!.patterns,
                 body: GameContent(
@@ -46,7 +45,9 @@ class PatternsScreen extends StatelessWidget {
                           '${patternsProvider.level}_${patternsProvider.maxTimeMilliseconds}',
                         ),
                         duration: Duration(
-                          milliseconds: patternsProvider.maxTimeMilliseconds,
+                          milliseconds: patternsProvider.totalTimeEnd == null
+                              ? patternsProvider.maxTimeMilliseconds
+                              : 0,
                         ),
                         onCompleted: () {
                           if (!patternsProvider.hasShownTimeoutDialog) {
@@ -118,11 +119,6 @@ class _PatternCell extends StatelessWidget {
         padding: const EdgeInsets.all(4.0),
         child: ElevatedButton(
           onPressed: () {
-            // if (showPattern) {
-            //   patternsProvider.startTime = DateTime.now().subtract(
-            //     Duration(milliseconds: (patternsProvider.maxTimeMilliseconds * 0.5).toInt() + 1000),
-            //   );
-            // }
             patternsProvider.handleCellTap(row, col, context);
           },
           style: ElevatedButton.styleFrom(
