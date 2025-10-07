@@ -1,235 +1,64 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:bulkmind/core/utils/time_utils.dart';
+import 'package:bulkmind/core/providers/base_game_provider.dart';
+import 'package:bulkmind/core/utils/game_feedback_utils.dart';
 import 'package:bulkmind/core/widgets/app_back_button.dart';
 import 'package:bulkmind/core/widgets/retry_button.dart';
 import 'package:bulkmind/features/intuition/domain/entities/color_game_data.dart';
 import 'package:bulkmind/features/onboarding/domain/usecases/generate_color_game.dart';
 import 'package:bulkmind/l10n/app_localizations.dart';
 
-class IntuitionGameProvider extends ChangeNotifier {
-  final StreamController<bool> _correctAnswerStreamController =
-      StreamController<bool>.broadcast();
+class IntuitionGameProvider extends BaseGameProvider {
+  IntuitionGameProvider() : super(featureKey: 'intuition') {
+    _initializeGame();
+  }
 
   ColorGameData? _game;
-  int _levelNumber = 0;
-  int _maxLevel = 0;
-  double _bestTime = double.infinity;
-  bool _isLoading = true;
   bool _showCorrectIconFeedback = false;
-  DateTime _startTimeGame = DateTime.now();
   bool _isDisposed = false;
-
-  IntuitionGameProvider() {
-    unawaited(_initGame());
-  }
+  Timer? _feedbackTimer;
 
   ColorGameData? get game => _game;
-  int get levelNumber => _levelNumber;
-  int get maxLevel => _maxLevel;
-  double get bestTime => _bestTime;
-  bool get isLoading => _isLoading;
+  int get levelNumber => level;
   bool get showCorrectIconFeedback => _showCorrectIconFeedback;
-  DateTime get startTimeGame => _startTimeGame;
-  Stream<bool> get correctAnswerStream => _correctAnswerStreamController.stream;
 
   void handleAnswer(Color selectedColor, BuildContext context) {
-    if (_isLoading || _game == null) return;
+    if (isLoading || _game == null) {
+      return;
+    }
 
     if (selectedColor == _game!.displayedColor) {
-      _levelNumber += 1;
-      _generateLevelGame(); // Generates new game, triggers rebuild of options
-
-      _showCorrectIconFeedback = true;
-      if (!_isDisposed) {
-        notifyListeners();
-      }
-
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (_isDisposed) return;
-        _showCorrectIconFeedback = false;
-        notifyListeners(); // Notify UI to hide icon
-      });
-    } else {
-      // calculate time taken for the current run
-      final timeTaken = DateTime.now().difference(_startTimeGame);
-      final double timeTakenMs = timeTaken.inMilliseconds.toDouble();
-
-      bool isNewLevelRecord = _levelNumber > _maxLevel;
-      bool isNewTimeRecord = false;
-
-      if (isNewLevelRecord) {
-        _maxLevel = _levelNumber;
-        _bestTime = timeTakenMs;
-        isNewTimeRecord = true;
-      } else if (_levelNumber == _maxLevel && timeTakenMs < _bestTime) {
-        _bestTime = timeTakenMs;
-        isNewTimeRecord = true;
-      }
-
-      if (isNewLevelRecord || isNewTimeRecord) {
-        _saveGameData(_maxLevel, _bestTime);
-      }
-
-      // wrong answer then show dialog
-      _showGameOverDialog(
-        context,
-        isNewLevelRecord,
-        isNewTimeRecord,
-        _levelNumber,
-        timeTaken,
-        _maxLevel,
-        _bestTime,
-      );
+      level += 1;
+      _showCorrectFeedback();
+      _generateLevelGame();
+      return;
     }
+
+    _onGameOver();
+    _showGameOverDialog(context: context, isTimeout: false);
   }
 
-  void showGameOverTimeOut(BuildContext context) {
-    // calculate time taken
-    final timeTaken = DateTime.now().difference(_startTimeGame);
-    final double timeTakenMs = timeTaken.inMilliseconds.toDouble();
-
-    bool isNewLevelRecord = _levelNumber > _maxLevel;
-    bool isNewTimeRecord = false;
-
-    if (isNewLevelRecord) {
-      _maxLevel = _levelNumber;
-      _bestTime = timeTakenMs;
-      isNewTimeRecord = true;
-    } else if (_levelNumber == _maxLevel && timeTakenMs < _bestTime) {
-      _bestTime = timeTakenMs;
-      isNewTimeRecord = true;
-    }
-
-    if (isNewLevelRecord || isNewTimeRecord) {
-      _saveGameData(_maxLevel, _bestTime);
-    }
-
-    // timeout then show dialog
-    _showGameOverDialog(
-      context,
-      isNewLevelRecord,
-      isNewTimeRecord,
-      _levelNumber,
-      timeTaken,
-      _maxLevel,
-      _bestTime,
-      isTimeout: true,
-    );
+  void onTimeOut(BuildContext context) {
+    _onGameOver();
+    _showGameOverDialog(context: context, isTimeout: true);
   }
 
-  void _showGameOverDialog(
-    BuildContext context,
-    bool isNewLevelRecord,
-    bool isNewTimeRecord,
-    int currentLevelReached,
-    Duration currentTimeTaken,
-    int globalMaxLevel,
-    double globalBestTime, {
-    bool isTimeout = false,
-  }) {
-    final localizations = AppLocalizations.of(context)!;
-    String recordMessage = '';
-
-    recordMessage +=
-        '${localizations.yourScore}: $currentLevelReached ${localizations.levels}\n';
-    recordMessage +=
-        '${localizations.timeTaken}: ${formatDuration(currentTimeTaken)}\n\n';
-
-    final bool hasNewRecord = isNewLevelRecord || isNewTimeRecord;
-    final Duration? bestTimeDuration = globalBestTime.isFinite
-        ? Duration(milliseconds: globalBestTime.round())
-        : null;
-
-    if (hasNewRecord) {
-      recordMessage +=
-          '🎉 ${localizations.newRecord}: $currentLevelReached ${localizations.levels}\n';
-      if (bestTimeDuration != null) {
-        recordMessage +=
-            '⏱️ ${localizations.newBestTime}: ${formatDuration(bestTimeDuration)}';
-      }
-    } else {
-      recordMessage +=
-          '${localizations.maxLevel}: $globalMaxLevel ${localizations.levels}\n';
-      if (bestTimeDuration != null) {
-        recordMessage +=
-            '⏱️ ${localizations.bestTime}: ${formatDuration(bestTimeDuration)}';
-      }
-    }
-
-    final dialogTitle = isTimeout
-        ? '⏰ ${localizations.timeOut}'
-        : localizations.youAreALooser;
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(dialogTitle),
-        content: Text(recordMessage),
-        actionsAlignment: MainAxisAlignment.spaceBetween,
-        actions: [
-          AppBackButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              GoRouter.of(context).go('/');
-            },
-          ),
-          RetryButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              _levelNumber = 0; // Reset level
-              _startTimeGame = DateTime.now();
-              _generateLevelGame(); // Generate new game
-              notifyListeners(); // Ensure UI reflects reset level and new game
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _initGame() async {
-    await _loadGameData();
-    if (_isDisposed) return;
+  void _initializeGame() {
+    level = 0;
+    _showCorrectIconFeedback = false;
+    gameEndedAt = null;
+    gameStartedAt = DateTime.now();
     _generateLevelGame();
-    _startTimeGame = DateTime.now();
-    _isLoading = false;
-    if (!_isDisposed) {
-      notifyListeners();
-    }
-  }
-
-  Future<void> _loadGameData() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      _maxLevel = prefs.getInt('intuition-maxLevel') ?? 0;
-      _bestTime = prefs.getDouble('intuition-bestTime') ?? double.infinity;
-    } catch (e) {
-      debugPrint('Error loading game data: $e');
-      _maxLevel = 0;
-      _bestTime = double.infinity;
-    }
-  }
-
-  Future<void> _saveGameData(int level, double time) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('intuition-maxLevel', level);
-      await prefs.setDouble('intuition-bestTime', time);
-    } catch (e) {
-      debugPrint('Error saving game data: $e');
-    }
   }
 
   void _generateLevelGame() {
     final pair = generateColorWordPair();
-    final Duration timeLimit = _calculateTimeLimitForLevel(_levelNumber);
+    final Duration timeLimit = _calculateTimeLimitForLevel(level);
+    maxTimeOut = timeLimit;
+
     _game = ColorGameData(
       wordKey: pair.key,
       displayedColor: pair.value,
@@ -242,7 +71,89 @@ class IntuitionGameProvider extends ChangeNotifier {
     }
   }
 
-  Duration _calculateTimeLimitForLevel(int level) {
+  Future<void> _showGameOverDialog({
+    required BuildContext context,
+    required bool isTimeout,
+  }) async {
+    final int currentLevel = level;
+    final localizations = AppLocalizations.of(context)!;
+
+    final bool hasNewRecord = isNewRecord(
+      level: currentLevel,
+      elapsedMilliseconds: totalElapsedTime.inMilliseconds,
+    );
+
+    if (hasNewRecord) {
+      await saveRecord(
+        level: currentLevel,
+        elapsedMilliseconds: totalElapsedTime.inMilliseconds,
+      );
+    }
+
+    final feedback = buildGameOverFeedback(
+      isTimeout: isTimeout,
+      localizations: localizations,
+      totalElapsedTime: totalElapsedTime,
+      currentLevel: currentLevel,
+      record: record,
+      hasNewRecord: hasNewRecord,
+    );
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(feedback.title),
+        content: Text(feedback.message),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        actions: [
+          AppBackButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              GoRouter.of(context).go('/');
+            },
+          ),
+          RetryButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              _restartGame();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCorrectFeedback() {
+    _feedbackTimer?.cancel();
+    _showCorrectIconFeedback = true;
+    if (!_isDisposed) {
+      notifyListeners();
+    }
+    _feedbackTimer = Timer(const Duration(milliseconds: 500), () {
+      if (_isDisposed) {
+        return;
+      }
+      _showCorrectIconFeedback = false;
+      notifyListeners();
+    });
+  }
+
+  void _restartGame() {
+    _feedbackTimer?.cancel();
+    _showCorrectIconFeedback = false;
+    level = 0;
+    gameEndedAt = null;
+    gameStartedAt = DateTime.now();
+    _generateLevelGame();
+  }
+
+  void _onGameOver() {
+    gameEndedAt = DateTime.now();
+    maxTimeOut = Duration.zero;
+  }
+
+  static Duration _calculateTimeLimitForLevel(int level) {
     if (level > 24) {
       return const Duration(milliseconds: 1500);
     }
@@ -267,7 +178,7 @@ class IntuitionGameProvider extends ChangeNotifier {
   @override
   void dispose() {
     _isDisposed = true;
-    _correctAnswerStreamController.close();
+    _feedbackTimer?.cancel();
     super.dispose();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:bulkmind/core/widgets/countdown_progress_indicator.dart';
+import 'package:bulkmind/core/widgets/timed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:bulkmind/core/widgets/base_scaffold.dart';
 import 'package:bulkmind/core/widgets/game_content.dart';
@@ -48,18 +49,6 @@ class _IntuitionScreenState extends State<IntuitionScreen> {
 
           final localizations = AppLocalizations.of(context)!;
 
-          final Widget feedbackIcon = AnswerFeedbackIcon(
-            // Use a key that changes with the game's actual state
-            // This ensures the icon widget is correctly re-built/updated
-            // when the level changes or when the icon needs to be shown/hidden.
-            key: ValueKey(
-              'feedback_icon_${gameProvider.levelNumber}_${gameProvider.showCorrectIconFeedback}',
-            ),
-            isVisible:
-                gameProvider.showCorrectIconFeedback, // Directly from provider
-            isCorrect: true, // It's for correct feedback
-          );
-
           if (gameProvider.isLoading || game == null) {
             return const Scaffold(
               backgroundColor: Colors.black,
@@ -84,14 +73,21 @@ class _IntuitionScreenState extends State<IntuitionScreen> {
                             '${gameProvider.levelNumber}_${game.wordKey}',
                           ),
                           duration: game.timeLimit ?? Duration(seconds: 0),
-                          onCompleted: () =>
-                              gameProvider.showGameOverTimeOut(context),
+                          onCompleted: () => gameProvider.onTimeOut(context),
                         ),
                   const SizedBox(height: 8),
                   Text("🤔", style: TextStyle(fontSize: 24)),
                 ],
               ),
-              feedbackIcon: feedbackIcon,
+              feedbackIcon: (gameProvider.level) > 0
+                  ? TimedDisplay(
+                      key: ValueKey(
+                        'timed_display_${gameProvider.levelNumber}',
+                      ),
+                      duration: const Duration(milliseconds: 500),
+                      child: const Text('✅', style: TextStyle(fontSize: 48)),
+                    )
+                  : null,
               question: Text(
                 colorName,
                 style: TextStyle(
