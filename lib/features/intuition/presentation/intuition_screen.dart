@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:bulkmind/core/widgets/base_scaffold.dart';
 import 'package:bulkmind/core/widgets/game_content.dart';
 import 'package:bulkmind/features/intuition/presentation/providers/intuition_game_provider.dart';
-import 'package:bulkmind/features/intuition/presentation/widgets/answer_feedback_icon.dart';
 import 'package:bulkmind/features/intuition/presentation/widgets/color_option_button.dart';
 import 'package:bulkmind/features/intuition/domain/entities/color_game_data.dart';
 import 'package:bulkmind/l10n/app_localizations.dart';
@@ -72,7 +71,8 @@ class _IntuitionScreenState extends State<IntuitionScreen> {
                           key: ValueKey(
                             '${gameProvider.levelNumber}_${game.wordKey}',
                           ),
-                          duration: game.timeLimit ?? Duration(seconds: 0),
+                          duration:
+                              gameProvider.maxTimeOut ?? Duration(seconds: 0),
                           onCompleted: () => gameProvider.onTimeOut(context),
                         ),
                   const SizedBox(height: 8),

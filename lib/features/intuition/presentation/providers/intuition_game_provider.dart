@@ -17,13 +17,11 @@ class IntuitionGameProvider extends BaseGameProvider {
   }
 
   ColorGameData? _game;
-  bool _showCorrectIconFeedback = false;
   bool _isDisposed = false;
   Timer? _feedbackTimer;
 
   ColorGameData? get game => _game;
   int get levelNumber => level;
-  bool get showCorrectIconFeedback => _showCorrectIconFeedback;
 
   void handleAnswer(Color selectedColor, BuildContext context) {
     if (isLoading || _game == null) {
@@ -32,7 +30,6 @@ class IntuitionGameProvider extends BaseGameProvider {
 
     if (selectedColor == _game!.displayedColor) {
       level += 1;
-      _showCorrectFeedback();
       _generateLevelGame();
       return;
     }
@@ -48,7 +45,6 @@ class IntuitionGameProvider extends BaseGameProvider {
 
   void _initializeGame() {
     level = 0;
-    _showCorrectIconFeedback = false;
     gameEndedAt = null;
     gameStartedAt = DateTime.now();
     _generateLevelGame();
@@ -74,7 +70,7 @@ class IntuitionGameProvider extends BaseGameProvider {
   Future<void> _showGameOverDialog({
     required BuildContext context,
     required bool isTimeout,
-  }) async {
+  }) {
     final int currentLevel = level;
     final localizations = AppLocalizations.of(context)!;
 
@@ -84,7 +80,7 @@ class IntuitionGameProvider extends BaseGameProvider {
     );
 
     if (hasNewRecord) {
-      await saveRecord(
+      saveRecord(
         level: currentLevel,
         elapsedMilliseconds: totalElapsedTime.inMilliseconds,
       );
@@ -99,7 +95,7 @@ class IntuitionGameProvider extends BaseGameProvider {
       hasNewRecord: hasNewRecord,
     );
 
-    await showDialog<void>(
+    return showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) => AlertDialog(
@@ -116,36 +112,12 @@ class IntuitionGameProvider extends BaseGameProvider {
           RetryButton(
             onPressed: () {
               Navigator.of(dialogContext).pop();
-              _restartGame();
+              _initializeGame();
             },
           ),
         ],
       ),
     );
-  }
-
-  void _showCorrectFeedback() {
-    _feedbackTimer?.cancel();
-    _showCorrectIconFeedback = true;
-    if (!_isDisposed) {
-      notifyListeners();
-    }
-    _feedbackTimer = Timer(const Duration(milliseconds: 500), () {
-      if (_isDisposed) {
-        return;
-      }
-      _showCorrectIconFeedback = false;
-      notifyListeners();
-    });
-  }
-
-  void _restartGame() {
-    _feedbackTimer?.cancel();
-    _showCorrectIconFeedback = false;
-    level = 0;
-    gameEndedAt = null;
-    gameStartedAt = DateTime.now();
-    _generateLevelGame();
   }
 
   void _onGameOver() {
