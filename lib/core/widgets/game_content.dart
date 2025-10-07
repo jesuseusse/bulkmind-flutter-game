@@ -5,7 +5,7 @@ class GameContent extends StatelessWidget {
   final int level;
   final String? time;
   final Widget? title;
-  final Widget feedbackIcon;
+  final Widget? feedbackIcon;
   final Widget question;
   final Widget options;
 
@@ -14,7 +14,7 @@ class GameContent extends StatelessWidget {
     required this.level,
     this.time,
     this.title,
-    required this.feedbackIcon,
+    this.feedbackIcon,
     required this.question,
     required this.options,
   });
@@ -50,7 +50,7 @@ class GameContent extends StatelessWidget {
               const SizedBox(height: 8),
             const SizedBox(height: 16),
             if (title != null) title!,
-            feedbackIcon,
+            SizedBox(height: 48, child: feedbackIcon),
             const SizedBox(height: 120),
             question,
             const SizedBox(height: 32),

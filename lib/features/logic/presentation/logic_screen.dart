@@ -1,3 +1,4 @@
+import 'package:bulkmind/core/widgets/timed_display.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -6,8 +7,7 @@ import 'package:bulkmind/core/widgets/base_scaffold.dart';
 import 'package:bulkmind/core/widgets/countdown_progress_indicator.dart';
 import 'package:bulkmind/core/widgets/game_content.dart';
 import 'package:bulkmind/core/widgets/game_option_button.dart';
-import 'package:bulkmind/features/intuition/presentation/widgets/answer_feedback_icon.dart';
-import 'package:bulkmind/features/logic/presentation/providers/logic_provider.dart';
+import 'package:bulkmind/features/logic/presentation/providers/logic_game_provider.dart';
 import 'package:bulkmind/l10n/app_localizations.dart';
 
 class LogicScreen extends StatelessWidget {
@@ -20,14 +20,6 @@ class LogicScreen extends StatelessWidget {
       child: Consumer<LogicProvider>(
         builder: (context, logicProvider, _) {
           final localizations = AppLocalizations.of(context)!;
-
-          final Widget feedbackIcon = AnswerFeedbackIcon(
-            key: ValueKey(
-              'feedback_icon_${logicProvider.level}_${logicProvider.showCorrectIconFeedback}',
-            ),
-            isVisible: logicProvider.showCorrectIconFeedback,
-            isCorrect: true,
-          );
 
           final options = logicProvider.options;
 
@@ -42,22 +34,31 @@ class LogicScreen extends StatelessWidget {
             title: localizations.logic,
             body: GameContent(
               level: logicProvider.level,
-              time: logicProvider.elapsedTimeFormatted,
-              feedbackIcon: feedbackIcon,
+              //show when level > 0
+              feedbackIcon: (logicProvider.level) > 0
+                  ? TimedDisplay(
+                      key: ValueKey('timed_display_${logicProvider.level}'),
+                      duration: const Duration(milliseconds: 500),
+                      child: const Text('✅', style: TextStyle(fontSize: 48)),
+                    )
+                  : null,
               question: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CountdownProgressIndicator(
                     key: ValueKey(
-                      'logic_timer_${logicProvider.level}_${logicProvider.timeLimit.inMilliseconds}_${logicProvider.timerSeed}',
+                      'logic_timer_${logicProvider.level}_${logicProvider.maxTimeOut.inMilliseconds}_${logicProvider.options.join(',')}',
                     ),
-                    duration: logicProvider.timeLimit,
-                    onCompleted: () =>
-                        logicProvider.handleTimeout(context),
+                    duration: logicProvider.maxTimeOut,
+                    onCompleted: () {
+                      logicProvider.maxTimeOut > Duration.zero
+                          ? logicProvider.onTimeOut(context)
+                          : null;
+                    },
                   ),
                   const SizedBox(height: 24),
                   Icon(
-                    logicProvider.comparisonSymbol == '>'
+                    logicProvider.question == '>'
                         ? Icons.trending_down
                         : Icons.trending_up,
                     size: 48,
@@ -73,14 +74,14 @@ class LogicScreen extends StatelessWidget {
                         value: options[0],
                         isPressed: logicProvider.isOptionPressed(options[0]),
                         onPressed: () =>
-                            logicProvider.selectOption(options[0], context),
+                            logicProvider.handleAnswer(options[0], context),
                       ),
                       const SizedBox(width: 16),
                       GameOptionButton(
                         value: options[1],
                         isPressed: logicProvider.isOptionPressed(options[1]),
                         onPressed: () =>
-                            logicProvider.selectOption(options[1], context),
+                            logicProvider.handleAnswer(options[1], context),
                       ),
                     ],
                   ),
@@ -91,14 +92,14 @@ class LogicScreen extends StatelessWidget {
                         value: options[2],
                         isPressed: logicProvider.isOptionPressed(options[2]),
                         onPressed: () =>
-                            logicProvider.selectOption(options[2], context),
+                            logicProvider.handleAnswer(options[2], context),
                       ),
                       const SizedBox(width: 16),
                       GameOptionButton(
                         value: options[3],
                         isPressed: logicProvider.isOptionPressed(options[3]),
                         onPressed: () =>
-                            logicProvider.selectOption(options[3], context),
+                            logicProvider.handleAnswer(options[3], context),
                       ),
                     ],
                   ),
