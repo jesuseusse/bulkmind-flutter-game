@@ -17,7 +17,7 @@ class PatternsScreen extends StatelessWidget {
       child: Consumer<PatternsProvider>(
         builder: (context, patternsProvider, _) {
           if (patternsProvider.startTime == null) {
-            return const SizedBox.shrink();
+            return const Center(child: CircularProgressIndicator());
           }
 
           final int totalRows = patternsProvider.rows;
@@ -44,7 +44,7 @@ class PatternsScreen extends StatelessWidget {
                   ? TimedDisplay(
                       key: ValueKey('timed_display_${patternsProvider.level}'),
                       duration: const Duration(milliseconds: 500),
-                      child: const Text('✅', style: TextStyle(fontSize: 48)),
+                      child: const Text('✅'),
                     )
                   : null,
               question: const SizedBox(),
@@ -58,9 +58,7 @@ class PatternsScreen extends StatelessWidget {
                         patternsProvider: patternsProvider,
                         row: row,
                         col: col,
-                        showPattern:
-                            patternsProvider.showPattern &&
-                            !patternsProvider.hasShownTimeoutDialog,
+                        showPattern: patternsProvider.showPattern,
                         disableInteraction:
                             patternsProvider.hasShownTimeoutDialog,
                       ),
@@ -101,11 +99,11 @@ class _PatternCell extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(4.0),
         child: ElevatedButton(
-          onPressed: disableInteraction
-              ? null
-              : () {
-                  patternsProvider.handleCellTap(row, col, context);
-                },
+          onPressed: () {
+            if (!disableInteraction) {
+              patternsProvider.handleCellTap(row, col, context);
+            }
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: _backgroundColor(
               isGamePatternActive,
@@ -118,23 +116,20 @@ class _PatternCell extends StatelessWidget {
             minimumSize: const Size.fromHeight(60),
           ),
           child: isUserPatternActive
-              ? LayoutBuilder(
-                  builder: (context, constraints) {
-                    final double size = patternsProvider.level < 5
-                        ? 48
-                        : (constraints.maxWidth < constraints.maxHeight
-                              ? constraints.maxWidth * 0.6
-                              : constraints.maxHeight * 0.6);
-                    return !isPatternCorrect
-                        ? const SizedBox.shrink()
-                        : Center(
-                            child: Icon(
-                              Icons.check_circle,
-                              color: Colors.white,
-                              size: size,
-                            ),
-                          );
-                  },
+              ? Center(
+                  child: !isPatternCorrect
+                      ? Icon(
+                          Icons.cancel,
+                          color: Colors.red,
+
+                          applyTextScaling: true,
+                        )
+                      : Icon(
+                          Icons.check_circle,
+                          color: Colors.white,
+
+                          applyTextScaling: true,
+                        ),
                 )
               : const SizedBox.shrink(),
         ),

@@ -76,9 +76,14 @@ class PatternsProvider extends BaseGameProvider {
 
     // Defer dialog to next frame to avoid building during build
 
-    if (context.mounted) {
-      _showGameOverDialog(context: context, isTimeout: false);
-    }
+    await Future.delayed(const Duration(milliseconds: 500), () {
+      if (_isDisposed) {
+        return;
+      }
+      if (context.mounted) {
+        _showGameOverDialog(context: context, isTimeout: false);
+      }
+    });
   }
 
   void _initializeGame() {
@@ -133,6 +138,7 @@ class PatternsProvider extends BaseGameProvider {
     }
     _onGameOver();
     _hasShownGameOverDialog = true;
+    _notifySafely();
     if (context.mounted) {
       _showGameOverDialog(context: context, isTimeout: true);
     }
