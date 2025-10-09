@@ -25,35 +25,37 @@ class HomeScreen extends StatelessWidget {
       onNavigate: (route) => context.go(route),
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.appName),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.person,
-              color: Theme.of(context).colorScheme.onSurface,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(l10n.appName),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.person,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              onPressed: () => context.go('/profile'),
             ),
-            onPressed: () => context.go('/profile'),
-          ),
-        ],
+          ],
+        ),
+        body: current == null
+            ? buildContent(false)
+            : FutureBuilder<domain.User?>(
+                future: repo.getUser(current.uid),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return buildContent(false);
+                  }
+                  final user = snapshot.data;
+                  final hasFullAccess = user?.isSubscribed ?? false;
+                  return buildContent(hasFullAccess);
+                },
+              ),
       ),
-      body: current == null
-          ? buildContent(false)
-          : FutureBuilder<domain.User?>(
-              future: repo.getUser(current.uid),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return buildContent(false);
-                }
-                final user = snapshot.data;
-                final hasFullAccess = user?.isSubscribed ?? false;
-                return buildContent(hasFullAccess);
-              },
-            ),
     );
   }
 }

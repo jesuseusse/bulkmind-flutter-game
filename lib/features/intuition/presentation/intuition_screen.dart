@@ -71,9 +71,11 @@ class _IntuitionScreenState extends State<IntuitionScreen> {
                           key: ValueKey(
                             '${gameProvider.levelNumber}_${game.wordKey}',
                           ),
-                          duration:
-                              gameProvider.maxTimeOut ?? Duration(seconds: 0),
-                          onCompleted: () => gameProvider.onTimeOut(context),
+                          duration: gameProvider.maxTimeOut,
+                          onCompleted: () =>
+                              gameProvider.maxTimeOut > Duration.zero
+                              ? gameProvider.onTimeOut(context)
+                              : null,
                         ),
                   const SizedBox(height: 8),
                   Text("🤔", style: TextStyle(fontSize: 24)),

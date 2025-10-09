@@ -22,6 +22,7 @@ class LogicProvider extends BaseGameProvider {
 
   void _initGame() {
     gameStartedAt = DateTime.now();
+    gameEndedAt = null;
     level = 0;
     _pressedOptions.clear();
     _generateLevelGame();
